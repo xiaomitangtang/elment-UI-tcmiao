@@ -1,0 +1,17 @@
+ 1. 内容优先,表现为辅
+  2. css命名中英文对照
+  current 当前    hover 悬停    selected 挑选   disabled 禁用   focus 得到焦点    blur 失去焦点   checked 勾选    success 成功    error 出错
+
+  header(hd) 头部   content(cnt) 内容   title(tit) 标题   item 项目（条）    cell 单元   image/pic(img) 图片   text(txt) 文字    top 顶部    scrubber 时序菜单
+
+  nav 导航    mainnav 主导航   subnav 子导航    topnav 顶部导航   breadcrumb 面包屑导航
+
+  flink 友情链接    footer 尾    copyright 版权
+
+  menu 菜单   submenu 子菜单   dropdown 下拉菜单
+
+  searchBar 搜索条   search 搜索条    searchTxt 搜索框   searchBtn 搜索按钮    search_key 搜索词
+
+  member 会员   ucenter 用户中心    loginBar 登陆条    login 登录    loginBtn 登录按钮   regsiter 注册按钮   btn-regsiter注册按钮    name 用户名    password 密码   nickname 昵称   mobilephone/mobile 手机    telephone/tel 电话   defaultavatar 默认头像
+
+  hot 热点    news 新闻   banner/AD 广告    download

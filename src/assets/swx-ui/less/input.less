@@ -1,0 +1,83 @@
+@import "basicConst";
+.swx-input{
+   &.is-disabled{
+     input{
+       background-color: @swx-common-input-disable-background!important;
+       color: @swx-common-text-color-normal!important;
+     }
+   }
+  .el-select{
+    min-width: 127px;
+    background-color: #fff;
+    height: 100%;
+  }
+}
+.swx-input-mini{
+  height: 26px!important;
+  input{
+    height: 26px!important;
+    padding-left: 13px;
+    font-size: 12px;
+  }
+  .el-input__icon{
+    line-height: 26px!important;
+  }
+}
+.swx-input-small{
+  height: 28px!important;
+  input{
+    height: 28px!important;
+    padding-left: 13px;
+    font-size: 13px;
+  }
+  .el-input__icon{
+      line-height: 28px!important;
+  }
+}
+.swx-input-medium{
+  height: 34px!important;
+  input{
+    height: 34px!important;
+    padding-left: 13px;
+    font-size: 14px;
+  }
+   .el-input__icon{
+    line-height: 34px!important;
+  }
+}
+
+.swx-input-success{
+  input{
+    border: 1px solid @swx-common-input-success!important;
+  }
+  .el-input__icon{
+    color:@swx-common-input-success;
+  }
+}
+.swx-input-warning{
+  input{
+    border: 1px solid @swx-common-input-waning!important;
+  }
+  .el-input__icon{
+    color:@swx-common-input-waning;
+  }
+}
+.swx-input-error{
+  input{
+    border: 1px solid @swx-common-input-error!important;
+  }
+  .el-input__icon{
+    color:@swx-common-input-error;
+  }
+}
+
+.swx-from{
+  .el-form-item{
+    //margin-bottom: 6px;
+    .el-form-item__label{
+      padding-bottom: 0;
+      color: @swx-common-text-color-normal;
+      font-size: 12px;
+    }
+  }
+}

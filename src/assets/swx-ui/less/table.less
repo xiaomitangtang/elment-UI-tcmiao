@@ -1,0 +1,96 @@
+@import "basicConst";
+.swx-table-simple{
+ .el-table__header-wrapper thead,.el-table__fixed-header-wrapper thead{
+   th:first-child::before{
+     display: none;
+   }
+  th{
+    position: relative;
+    background-color: @swx-common-table-color-simple-title-bacground;
+    &::before{
+      content: "";
+      position: absolute;
+      top: 20%;
+      left: 0;
+      width: 1px;
+      height:60%;
+      background-color: @swx-common-table-color-simple-title-separate-color;
+    }
+    .cell{
+      color: @swx-common-table-color-simple-title-color;
+      font-weight: 400;
+      font-size: 14px;
+    }
+  }
+ }
+  .el-table__row--striped>td{
+     background-color: @swx-common-table-color-simple-stripe!important;
+   }
+  .el-table__row.hover-row>td{
+    background-color: @swx-common-table-color-simple-hover!important;
+  }
+  .current-row>td{
+    background-color: @swx-common-table-color-colors-active!important;
+  }
+}
+.swx-table-colors{
+  .el-table__header-wrapper thead,.el-table__fixed-header-wrapper thead{
+    th:first-child::before{
+      display: none;
+    }
+    th{
+      position: relative;
+      background-color: @swx-common-table-color-colors-title-background;
+      border-bottom: 2px solid @swx-common-table-color-colors-title-borderColor;
+      &::before{
+        content: "";
+        position: absolute;
+        top: 20%;
+        left: 0;
+        width: 1px;
+        height: 60%;
+        background-color: @swx-common-table-color-colors-title-separate-color;
+      }
+      .cell{
+        color: @swx-common-table-color-colors-title-color;
+        font-weight: 400;
+        font-size: 14px;
+
+      }
+    }
+  }
+  .el-table__row--striped>td{
+    background-color: @swx-common-table-color-colors-stripe!important;
+  }
+  .el-table__row.hover-row>td{
+    background-color: @swx-common-table-color-colors-hover!important;
+  }
+  .current-row>td{
+    background-color: @swx-common-table-color-colors-active!important;
+  }
+}
+.swx-table-multi-header{
+  .el-table__header-wrapper thead tr,.el-table__fixed-header-wrapper thead tr{
+         th{
+           position: relative;
+           background-color: @swx-common-table-color-simple-title-bacground!important;
+           border: 1px solid @swx-common-table-color-multi-header-border;
+        .cell{
+          position: relative;
+          font-size: 14px;
+          height: 100%;
+          color: @swx-common-table-color-simple-title-color;
+        }
+      }
+
+    }
+  .el-table__row--striped>td{
+    background-color: @swx-common-table-color-simple-stripe!important;
+  }
+  .el-table__row.hover-row>td{
+    background-color: @swx-common-table-color-simple-hover!important;
+  }
+  .current-row>td{
+    background-color: @swx-common-table-color-colors-active!important;
+  }
+}
