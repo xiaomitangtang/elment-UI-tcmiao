@@ -1,0 +1,31 @@
+@import "basicConst";
+.swx-dialog{
+  background-color: rgba(0,0,0,.6);
+  .el-dialog{
+    border-radius: 0;
+    .el-dialog__header{
+      background-color: @swx-common-dialog-header-background;
+      padding: 0 20px;
+      height: 40px;
+      .el-dialog__title{
+        height: 100%;
+        line-height: 40px;
+        color: #ffffff;
+      }
+      .el-dialog__headerbtn{
+        top: 8px;
+        right: 8px;
+        .el-dialog__close{
+          color: #ffffff;
+          font-size: 26px;
+        }
+      }
+    }
+    .el-dialog__body{
+      padding: 25px 30px 0;
+    }
+    .el-dialog__footer{
+      padding: 15px 30px 30px;
+    }
+  }
+}

@@ -1,0 +1,72 @@
+.swx-tree-hidden-arrow{
+  .el-tree-node__content{
+    .el-tree-node__expand-icon::before{
+      content: none;
+      display: none;
+    }
+  }
+}
+.swx-tree-arrow-style-one{
+  .el-tree-node__expand-icon.el-icon-caret-right{
+   &::before{
+     display: inline-block;
+     box-sizing: border-box;
+     padding: 2px;
+     content: '\e62b';
+     width: 16px;
+     height: 16px;
+     font-size: 13px;
+     text-align: center;
+     line-height: 13px;
+   }
+    &.expanded::before{
+      font-size: 10px;
+      content:"\e621";
+      transform:rotate(90deg)
+    }
+  }
+
+}
+.swx-tree-arrow-style-two{
+  .el-tree-node__expand-icon.el-icon-caret-right{
+    &::before{
+      display: inline-block;
+      box-sizing: border-box;
+      padding: 2px;
+      content: '';
+      width: 14px;
+      height: 14px;
+      text-align: center;
+      background: url("../icons/plus-border.png") no-repeat center
+        center/100% 100%;
+    }
+    &.expanded::before{
+      content:"";
+      background: url("../icons/reduce-reduce.png") no-repeat center
+        center/100% 100%;
+      transform: rotate(90deg);
+    }
+    &.is-leaf{
+      margin-left: 13px;
+      &::before{
+        content: none;
+      }
+    }
+  }
+  .swx-icon-span{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+  }
+  .swx-icon-span-1{
+    background: url("../icons/emblem.png") no-repeat center center/100% 100%;
+  }
+  .swx-icon-span-2{
+    background: url("../icons/squre.png") no-repeat center center/100% 100%;
+  }
+  .swx-icon-span-3{
+    background: url("../icons/default-portrait.png") no-repeat center center/100% 100%;
+  }
+
+}

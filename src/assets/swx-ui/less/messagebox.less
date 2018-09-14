@@ -1,0 +1,27 @@
+@import "basicConst";
+.swx-message-box{
+  border-radius: 3px;
+  .el-message-box__header{
+    height: 40px;
+    line-height: 40px;
+    padding: 0 15px;
+    background-color: @swx-common-msgbox-header-background;
+    border-bottom: 1px solid @swx-common-msgbox-header-border;
+    .el-message-box__title{
+      height: 40px;
+      line-height: 40px;
+      color: #000000;
+      //font-size: 16px;
+    }
+    .el-message-box__headerbtn{
+      top: 7px;
+      font-size:24px;
+    }
+  }
+
+  &.swx-message-box-btns-center{
+    .el-message-box__btns{
+      text-align: center;
+    }
+  }
+}

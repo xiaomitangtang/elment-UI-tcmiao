@@ -1,0 +1,51 @@
+@import "basicConst";
+.swx-radio,.swx-radio el-radio{
+  .el-radio__input{
+    .el-radio__inner{
+      border: 1px solid @swx-common-radio-border-color!important;
+
+    }
+  }
+  .is-checked{
+    .el-radio__inner{
+      background-color: #fff;
+      &::after{
+        width: 6px;
+        height: 6px;
+        background-color: @swx-common-radio-blue;
+      }
+    }
+
+  }
+ &.is-checked .el-radio__label, &.is-disabled span.el-radio__label{
+    color: @swx-common-text-color-normal;
+  }
+}
+
+
+
+.swx-checkbox,.swx-checkbox .el-checkbox{
+  &.is-disabled .el-checkbox__inner,  &.is-disabled.is-checked .el-checkbox__inner,&.is-checked .el-checkbox__inner{
+    border-color: @swx-common-checkbox-border-color;
+  }
+  .el-checkbox__label{
+  }
+  &.is-checked{
+    .el-checkbox__inner{
+      background: #ffffff;
+      &::after{
+        border: 2px solid @swx-common-checkbox-blue;
+        border-left: 0;
+        border-top: 0;
+      }
+    }
+    .el-checkbox__label{
+      color: @swx-common-text-color-normal;
+    }
+  }
+
+  &.is-disabled span.el-checkbox__label{
+    color: @swx-common-text-color-normal;
+
+  }
+}

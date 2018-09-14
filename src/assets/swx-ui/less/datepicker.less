@@ -1,0 +1,43 @@
+@import "basicConst";
+.swx-datepicker{
+ .el-range-input{
+   line-height: 40px;
+ }
+  &.el-picker-panel{
+    border: 1px solid @swx-common-datepicker-blue;
+    .el-date-picker__header{
+      button{
+        color: @swx-common-datepicker-blue;
+        &:active{
+          border-radius: 3px;
+          background-color: @swx-common-datepicker-blue;
+          color: #ffffff;
+        }
+      }
+    }
+    .el-picker-panel__content{
+      .el-date-table{
+        margin-left: -16px;
+        width: 322px;
+        tr:nth-child(1){
+          background-color:@swx-common-datepicker-blue;
+         th{
+           color: #ffffff;
+           font-size: 16px;
+         }
+        }
+        .el-date-table__row{
+          .available:nth-child(7n), .available:nth-child(7n+1){
+            color: @swx-common-datepicker-red;
+            &:hover{
+              color:@swx-common-datepicker-blue;
+            }
+          }
+        }
+      }
+    }
+    .popper__arrow{
+display: none;
+    }
+  }
+}

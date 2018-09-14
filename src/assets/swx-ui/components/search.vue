@@ -8,17 +8,20 @@
                   @focus="searchInputFocus"
                   @blur="searchInputBlur"
                   @change="searchInputChange"
+                  :disabled="disable"
         >
            <template v-if="searchType!=='simple'&&selects.length" >
                <div slot="prepend" :style="prependStyle">
                    <div class="swx-prepend-select-container"  v-for="(select ,index) in selects"  :key="'swx-search-input'+index">
-                       <el-select size="mini" v-model="selectList[select.key]"    placeholder="请选择" @change="selectChange">
+                       <el-select size="mini" v-model="selectList[select.key]"    :placeholder="select.placeholder||'请选择'" @change="selectChange"
+                                  :disabled="disable"
+                       >
                            <el-option v-for="(item,index) in select.list" :label="item[options.label]" :key="'swx-search-option'+index" :value="item[options.value]"></el-option>
                        </el-select>
                        <span class="swx-search-selects-line" ></span>
                    </div>
                </div>
-               <el-button type="primary" @click="search" class="swx-search-btn" slot="append" :icon="sufIcon">{{submitText}}</el-button>
+               <el-button type="primary"   :disabled="disable" @click="search" class="swx-search-btn" slot="append" :icon="sufIcon">{{submitText}}</el-button>
            </template>
         </el-input>
 </template>
@@ -31,6 +34,7 @@ export default {
     selects: { type: Array, default: () => [] },
     placeholder: { type: String, default: "请输入" },
     submitText: { type: String, default: "" },
+    disable: { type: Boolean, default: false },
     options: {
       type: Object,
       default: () => ({ label: "label", value: "value" })
@@ -69,6 +73,20 @@ export default {
   watch: {
     keywords(n) {
       this.$emit("change", { keywords: n, keys: this.selectList });
+    },
+    selects: {
+      deep: true,
+      handler(n) {
+        if (!Array.isArray(n)) {
+          alert("你传入的搜索条件应为数组---from  swx-search");
+          return;
+        }
+        let tempList = {};
+        n.forEach(item => {
+          tempList[item.key] = "";
+        });
+        this.selectList = tempList;
+      }
     }
   },
   computed: {
@@ -85,7 +103,8 @@ export default {
         "swx-simple-search": this.searchType === "simple",
         "swx-search-selects-small": this.searchType === "selects-small",
         "swx-search-selects-large": this.searchType === "selects-large",
-        "swx-search-focus": this.isFocus
+        "swx-search-focus": this.isFocus,
+        "swx-search-disable": this.disable
       };
     }
   }
@@ -144,6 +163,7 @@ export default {
   input {
     height: 32px;
     padding-left: 13px;
+    line-height: 32px;
     font-size: 12px;
   }
   .el-input__icon {
@@ -163,6 +183,7 @@ export default {
   background-color: #fff;
   input {
     height: 42px;
+    line-height: 42px;
     border: 0;
   }
   .swx-search-btn {
@@ -185,6 +206,23 @@ export default {
   .el-select {
     margin: 10px 0 0 0;
     width: 127px;
+  }
+}
+.swx-search-disable {
+  border: 1px solid #dddddd;
+  background-color: #f1f1f1;
+  padding: 0;
+  .swx-prepend-select-container {
+    background-color: #f1f1f1;
+  }
+  .el-input-group__prepend {
+    border: 1px solid #f1f1f1;
+  }
+  .el-select {
+    background-color: transparent;
+  }
+  .swx-search-btn {
+    background-color: #cbcbcb !important;
   }
 }
 </style>

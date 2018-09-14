@@ -80,4 +80,31 @@ export default {
     overflow: auto;
   }
 }
+
+.standard-img {
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.name_text_box {
+  background-color: #f5f5f5;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  padding: 10px;
+}
+.name_text_item {
+  display: inline-block;
+  padding: 10px;
+  min-width: 20%;
+  span {
+    padding: 5px;
+  }
+}
+.swx-pre {
+  background-color: #e7e7e7;
+  padding: 10px;
+  border-radius: 10px;
+  line-height: 18px;
+}
 </style>

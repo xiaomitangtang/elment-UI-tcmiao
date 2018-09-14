@@ -6,6 +6,7 @@
                      background-color="#1865a7"
                      text-color="#fff"
                      :router="true"
+                     :unique-opened="true"
                      active-text-color="#fff">
                 <template  v-for="(menu,index) in menuList" >
                     <el-submenu v-if="menu.children&&menu.children.length"   :index="menu.id" :key="'menu'+index">
@@ -39,9 +40,76 @@ export default {
       menuList: [
         {
           id: "1-1",
-          routername: "/standard",
           title: "前端规范",
-          icon: "el-icon-menu"
+          icon: "el-icon-menu",
+          children: [
+            {
+              id: "1-1",
+              routername: "/swxUI/html",
+              title: "html书写规范",
+              icon: ""
+            },
+            {
+              id: "1-2",
+              routername: "/swxUI/css",
+              title: "css写作注意事项",
+              icon: ""
+            },
+            {
+              id: "1-3",
+              routername: "/swxUI/hack",
+              title: "CSS Hack",
+              icon: ""
+            },
+            {
+              id: "1-4",
+              routername: "/swxUI/keycode",
+              title: "键盘按钮Keycode",
+              icon: ""
+            },
+            {
+              id: "1-5",
+              routername: "/swxUI/aria",
+              title: "ARIA属性值",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/css_name",
+              title: "css命名规范",
+              icon: ""
+            },
+            {
+              id: "1-7",
+              routername: "/swxUI/html_name",
+              title: "html命名规范",
+              icon: ""
+            },
+            {
+              id: "1-8",
+              routername: "/swxUI/folder_name",
+              title: "文件夹命名规范",
+              icon: ""
+            },
+            {
+              id: "1-9",
+              routername: "/swxUI/regex",
+              title: "常用正则表达式",
+              icon: ""
+            },
+            {
+              id: "1-10",
+              routername: "/swxUI/cursor",
+              title: "css中的cursor",
+              icon: ""
+            },
+            {
+              id: "1-11",
+              routername: "/swxUI/edm",
+              title: "EDM制作规范",
+              icon: ""
+            }
+          ]
         },
         {
           id: "1",
@@ -85,33 +153,75 @@ export default {
               icon: ""
             },
             {
-              id: "1-7",
-              routername: "/standard/html_name",
-              title: "html命名规范",
+              id: "1-6",
+              routername: "/swxUI/select",
+              title: "下拉选择",
               icon: ""
             },
             {
-              id: "1-8",
-              routername: "/standard/folder_name",
-              title: "文件夹命名规范",
+              id: "1-6",
+              routername: "/swxUI/datepicker",
+              title: "日期选择",
               icon: ""
             },
             {
-              id: "1-9",
-              routername: "/standard/regex",
-              title: "常用正则表达式",
+              id: "1-6",
+              routername: "/swxUI/pagenation",
+              title: "分页",
               icon: ""
             },
             {
-              id: "1-10",
-              routername: "/standard/cursor",
-              title: "css中的cursor",
+              id: "1-6",
+              routername: "/swxUI/switch",
+              title: "开关",
               icon: ""
             },
             {
-              id: "1-11",
-              routername: "/standard/edm",
-              title: "EDM制作规范",
+              id: "1-6",
+              routername: "/swxUI/radioAndCheckbox",
+              title: "单选复选",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/tabs",
+              title: "Tabs",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/alert",
+              title: "alert",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/notify",
+              title: "notify",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/msgbox",
+              title: "msgbox",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/dialog",
+              title: "dialog",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/transfer",
+              title: "transfer",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/tree",
+              title: "tree",
               icon: ""
             }
           ]
@@ -152,6 +262,7 @@ export default {
     top: 8px;
     color: #fff;
     font-size: 24px;
+    cursor: pointer;
   }
 }
 </style>

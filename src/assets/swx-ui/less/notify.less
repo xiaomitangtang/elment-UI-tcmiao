@@ -1,0 +1,35 @@
+@import "basicConst";
+.swx-notify{
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  .el-icon-success{
+    color: @swx-common-alert-success-color;
+  }
+  .el-icon-warning{
+    color: @swx-common-alert-warning-color;
+  }
+  .el-icon-info{
+    color: @swx-common-alert-info-color;
+  }
+  .el-icon-error{
+    color: @swx-common-alert-error-color;
+  }
+
+  &.swx-notify-success:hover{
+    border: 1px solid @swx-common-alert-success-border;
+    background-color: @swx-common-alert-success-bacground;
+  }
+  &.swx-notify-warning:hover{
+    border: 1px solid @swx-common-alert-warning-border;
+    background-color: @swx-common-alert-warning-bacground;
+  }
+  &.swx-notify-info:hover{
+    background-color: @swx-common-alert-info-bacground;
+    border: 1px solid @swx-common-alert-info-border;
+
+  }
+  &.swx-notify-error:hover{
+    border: 1px solid @swx-common-alert-error-border;
+    background-color: @swx-common-alert-error-bacground;
+  }
+}
