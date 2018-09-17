@@ -223,6 +223,24 @@ export default {
               routername: "/swxUI/tree",
               title: "tree",
               icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/breadcrumb",
+              title: "breadcrumb",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/badge",
+              title: "badge",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/loading",
+              title: "loading",
+              icon: ""
             }
           ]
         }

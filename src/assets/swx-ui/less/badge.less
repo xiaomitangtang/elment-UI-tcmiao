@@ -1,0 +1,43 @@
+@import "basicConst";
+.swx-badge{
+  .el-badge__content{
+    color: #ffffff;
+    line-height: 16px;
+  }
+  &.swx-badge-success{
+    .el-badge__content{
+      background-color: @swx-common-badge-success;
+      border: 1px solid @swx-common-badge-success;
+    }
+    &.swx-badge-plain{
+      .el-badge__content{
+        color:@swx-common-badge-success;
+        background-color: #fff;
+      }
+    }
+  }
+  &.swx-badge-error{
+    .el-badge__content{
+      background-color: @swx-common-badge-error;
+      border: 1px solid @swx-common-badge-error;
+    }
+    &.swx-badge-plain{
+      .el-badge__content{
+        color:@swx-common-badge-error;
+        background-color: #fff;
+      }
+    }
+  }
+  &.swx-badge-warning{
+    .el-badge__content{
+      background-color: @swx-common-badge-warning;
+      border: 1px solid @swx-common-badge-warning;
+    }
+    &.swx-badge-plain{
+      .el-badge__content{
+        color:@swx-common-badge-warning;
+        background-color: #fff;
+      }
+    }
+  }
+}

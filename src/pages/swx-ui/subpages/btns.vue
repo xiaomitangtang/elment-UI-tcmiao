@@ -3,8 +3,8 @@
         <h3>鼠标移入，即可获得相应类名，复制即可使用，element的type为默认type，其余属性与elment使用方法一致，只是进行css样式覆盖</h3>
         <div v-for="(btns,index) in btnss" :key="'btns'+index">
             <el-tooltip v-for="(btn,index) in btns" :key="'btn'+index"  effect="dark" :content="btn.cssName">
-                <el-button @click="copyCss(btn)" :class="btn.cssName" :icon="btn.icon" :round="btn.round" :style="btn.style">{{btn.text}}</el-button>
-            </el-tooltip>
+            <el-button @click="copyCss(btn)" :class="btn.cssName" :icon="btn.icon" :round="btn.round" :style="btn.style">{{btn.text}}</el-button>
+        </el-tooltip>
         </div>
 
         <el-tooltip style="margin: 10px 10px;" v-for="(group,index) in btngroups" :key="'group'+index"  effect="dark" content="按钮组与element使用方法一致" >

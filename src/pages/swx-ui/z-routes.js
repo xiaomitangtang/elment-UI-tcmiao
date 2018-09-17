@@ -1,5 +1,6 @@
 const routes = [
   {
+    name: "swxUi",
     path: "/swxUI",
     component: () => import("./index"),
     children: [
@@ -89,9 +90,24 @@ const routes = [
         component: () => import("./subpages/transfer.vue")
       },
       {
+        path: "breadcrumb",
+        name: "breadcrumb",
+        component: () => import("./subpages/breadcrumb.vue")
+      },
+      {
         path: "tree",
         name: "tree",
         component: () => import("./subpages/tree.vue")
+      },
+      {
+        path: "badge",
+        name: "badge",
+        component: () => import("./subpages/badge.vue")
+      },
+      {
+        path: "loading",
+        name: "loading",
+        component: () => import("./subpages/loading.vue")
       },
       {
         path: "html",

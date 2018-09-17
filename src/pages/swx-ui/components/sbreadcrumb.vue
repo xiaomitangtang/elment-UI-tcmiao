@@ -1,18 +1,19 @@
 <template>
     <div>
         <i class="el-icon-location-outline" style="color: #7fa7d8"></i>
-        <el-breadcrumb class="swx-breadcrumb" separator-class="el-icon-arrow-right"  style="display: inline-block;margin-left: 6px;">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+        <el-breadcrumb class="swx-breadcrumb" separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item v-for="(item,index) in routerList " :key="'swx-breadcrumb'+index" :to="item">{{item.name}}</el-breadcrumb-item>
         </el-breadcrumb>
     </div>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {};
+  },
+  computed: {
+    ...mapState(["routerList"])
   }
 };
 </script>

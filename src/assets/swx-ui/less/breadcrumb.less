@@ -1,0 +1,23 @@
+@import "basicConst";
+.swx-breadcrumb{
+  display: inline-block;
+  margin-left: 6px;
+  .el-breadcrumb__item{
+    .el-breadcrumb__inner{
+      color: @swx-common-text-color-inactive;
+      font-weight: 400;
+    }
+    &:last-child{
+      .el-breadcrumb__inner{
+        cursor: pointer;
+        color: #000000;
+        &:hover{
+          color: #2876bd;
+        }
+      }
+    }
+  }
+  .is-link{
+    font-weight: 200;
+  }
+}

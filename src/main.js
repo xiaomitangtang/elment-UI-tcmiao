@@ -63,6 +63,7 @@ axios.interceptors.request.use(
 );
 //导航守卫
 router.beforeEach((to, from, next) => {
+  store.commit("setRouterList", to.matched);
   next();
 });
 

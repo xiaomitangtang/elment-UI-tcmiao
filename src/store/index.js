@@ -5,11 +5,16 @@ import demo from "./modules/demo";
 import socketDemo from "./modules/socket_io_demo";
 Vue.use(Vuex);
 
-export const mutations = {};
-
+export const mutations = {
+  setRouterList(state, data) {
+    state.routerList = data;
+  }
+};
 export const actions = {};
-
 export const getters = {};
+export const state = {
+  routerList: []
+};
 
 export function createStore() {
   return new Vuex.Store({
@@ -17,7 +22,7 @@ export function createStore() {
       demo,
       socketDemo
     },
-    state: {},
+    state,
     actions,
     mutations,
     getters
