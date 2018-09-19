@@ -18,7 +18,7 @@ import swxUi from "@/assets/swx-ui/index.js";
 import VueClipboard from "vue-clipboard2";
 Vue.use(swxUi);
 Vue.use(VueClipboard);
-Vue.use(ElementUI);
+Vue.use(ElementUI, { size: "small" });
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key]);
 });

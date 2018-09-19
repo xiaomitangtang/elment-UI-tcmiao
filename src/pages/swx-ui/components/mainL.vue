@@ -40,6 +40,12 @@ export default {
       menuList: [
         {
           id: "1-1",
+          routername: "/activeForm",
+          title: "动态表单",
+          icon: "el-icon-menu"
+        },
+        {
+          id: "1-1",
           title: "前端规范",
           icon: "el-icon-menu",
           children: [
@@ -240,6 +246,36 @@ export default {
               id: "1-6",
               routername: "/swxUI/loading",
               title: "loading",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/tooltip",
+              title: "tooltip",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/popover",
+              title: "popover",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/timeline",
+              title: "timeline",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/steps",
+              title: "steps",
+              icon: ""
+            },
+            {
+              id: "1-6",
+              routername: "/swxUI/searchTree",
+              title: "searchTree",
               icon: ""
             }
           ]

@@ -409,7 +409,8 @@ export default {
       }
     }
     .weeks {
-      width: 100%;
+      /*width: 100%;*/
+      margin-right: -1px;
       height: 36px;
       line-height: 36px;
       background-color: #1987d4;

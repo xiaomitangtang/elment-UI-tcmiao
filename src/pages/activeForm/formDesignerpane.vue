@@ -1,0 +1,311 @@
+<template>
+  <div class='target' @drop.stop.prevent="drop" @dragover.prevent.stop>
+    <el-form ref="myform" :model="formModel" :rules="formRule" >
+      <el-row class="myform-el-row" :gutter="5">
+        <template v-for="(item ,index) in activeFormItemList">
+          <div style="clear: both" v-if="index%layout===0&&openLayout"></div>
+          <el-col class="my-element"  :style="{width:item.settings.handleWidth}"
+                  :key="index" :span="item.span" :offset="item.offset"  :class="{editItem:edit}"
+                  @dragstart.native="formItemDragStart(item,$event)" @dragenter.native="dropToIndex=index"
+                  @dblclick.native="formItemClick({index,item})">
+            <el-button v-if="edit" size="mini" type="text" icon="el-icon-circle-close"  class="close-item" @click.stop="delFormItem(index,item)"></el-button>
+            <el-form-item v-if="showformItem" :label="item.label" :label-width="item.labelWidth?(item.labelWidth+'px'):'1px'" :prop="item.key">
+              <myElement  :draggable="edit"  :formModel="formModel" :innerdata="item"></myElement>
+            </el-form-item>
+            <!--<div class="resizeBar" v-if="edit" @click.stop.passive @mousedown.stop.prevent="myelformItemResize($event,item)" @mouseleave.stop.prevent="myelformItemStopResize" @mouseup.stop.prevent="myelformItemStopResize"></div>-->
+            <div class="changeWidthbtns" v-if="edit" @click.stop.prevent>
+              <span @click="changeFormItemWidth(item,'del')" class="el-icon-remove"></span>
+              <span @click="changeFormItemWidth(item,'add')" class="el-icon-circle-plus"></span>
+            </div>
+          </el-col>
+        </template>
+      </el-row>
+    </el-form>
+  </div>
+</template>
+<script>
+import formDesignerStatic from "./formDesignerStatic";
+export default {
+  name: "formDesignerpane",
+  props: {
+    formItemList: { type: Array, default: () => [] }
+  },
+  data() {
+    return {
+      showformItem: true,
+      activeFormItemList: [],
+      formData: {},
+      formModalData: { settings: {} },
+      nowFormItem: null,
+      formItemSettingsValue: formDesignerStatic.formItemSettingsValue,
+      dragedItem: null,
+      dropToIndex: -1,
+      formModel: {},
+      formRule: {}
+    };
+  },
+  inject: ["formDedigner"],
+  methods: {
+    getSettings: formDesignerStatic.getSettings,
+    getDefauleVal: formDesignerStatic.getDefauleVal,
+    getDefaultRule: formDesignerStatic.getDefaultRule,
+    changeFormItemWidth(item, type) {
+      if (type === "del") {
+        if (item.span < 4) {
+          return;
+        }
+        item.span--;
+      } else if (type === "add") {
+        if (item.span >= 24) {
+          return;
+        }
+        item.span++;
+      }
+    },
+    saveFormStyle(formModalData) {
+      if (formModalData.span !== this.nowFormItem.span) {
+        formModalData.settings.handleWidth = null;
+      }
+      if (formModalData.label) {
+        formModalData.label = formModalData.label.trim();
+        let textW =
+          formModalData.label.replace(/[\u4e00-\u9fa5]/g, "aa").length * 10 +
+          12;
+        formModalData.labelWidth = textW === 12 ? 0 : Math.max(textW, 50);
+      }
+      if (formModalData.texts) {
+        formModalData.settings.texts = formModalData.texts
+          .split("-")
+          .slice(0, formModalData.settings.max);
+      }
+      Object.keys(formModalData).forEach(key => {
+        this.nowFormItem[key] = formModalData[key];
+      });
+    },
+    formItemClick({ index, item }) {
+      if (!this.edit) {
+        return;
+      }
+      let temp = Object.assign({}, item);
+      this.nowFormItem = item;
+      temp.settings = this.getSettings(item);
+      this.$emit("formDesignerpaneItemClick", this, temp);
+    },
+    formItemDragStart(item, e) {
+      if (!this.edit) {
+        return;
+      }
+      this.dragedItem = item;
+      this.$emit("setNowFormPaneAndnowFormPaneDragItem", this, this.dragedItem);
+    },
+    delDragItem() {
+      let dragItemIndex = this.activeFormItemList.indexOf(this.dragedItem);
+      this.activeFormItemList.splice(dragItemIndex, 1);
+      this.dragedItem = null;
+      this.dropToIndex = this.activeFormItemList.length - 1;
+    },
+    dropFromInner() {
+      if (this.dragedItem.component === "el-textarea") {
+        this.dropToIndex = this.activeFormItemList.length - 1;
+      }
+      if (this.dragedItem.component === "el-upload") {
+        this.dropToIndex = this.findLastToIndex(
+          this.activeFormItemList.length - 1
+        );
+      }
+      let dragItemIndex = this.activeFormItemList.indexOf(this.dragedItem);
+      if (this.dropToIndex + 1 > 0) {
+        if (dragItemIndex < this.dropToIndex) {
+          this.activeFormItemList.splice(
+            this.dropToIndex + 1,
+            0,
+            this.dragedItem
+          );
+          this.activeFormItemList.splice(dragItemIndex, 1);
+        } else if (dragItemIndex > this.dropToIndex) {
+          this.activeFormItemList.splice(
+            this.dropToIndex + 1,
+            0,
+            this.dragedItem
+          );
+          this.activeFormItemList.splice(dragItemIndex + 1, 1);
+        }
+      } else {
+        this.activeFormItemList.splice(dragItemIndex, 1);
+        this.activeFormItemList.push(this.dragedItem);
+      }
+      this.dragedItem = null;
+    },
+    dropFromOuter(com, outDragItem) {
+      let tempcom = outDragItem || {
+        component: com,
+        settings: {},
+        span: 24 / this.$store.state.formDesigner.layout,
+        label: "",
+        key: com + Math.floor(Math.random() * 100000),
+        val: "",
+        offset: 0,
+        isRequire: false,
+        dataType: { value: "" },
+        labelWidth: 1
+      };
+      if (com === "el-textarea") {
+        this.dropToIndex = -1;
+        tempcom.span = 24;
+        tempcom.settings = { type: "textarea", rows: 5 };
+      }
+      if (com === "el-upload") {
+        this.dropToIndex = this.findLastToIndex(
+          this.activeFormItemList.length - 1
+        );
+      }
+      if (this.dropToIndex + 1 > 0) {
+        this.activeFormItemList.splice(this.dropToIndex + 1, 0, tempcom);
+      } else {
+        if (
+          this.activeFormItemList.length &&
+          this.formItemSettingsValue.mustLastFormItem.indexOf(
+            this.activeFormItemList[0].component
+          ) + 1
+        ) {
+          this.activeFormItemList.splice(0, 0, tempcom);
+        } else {
+          this.activeFormItemList.push(tempcom);
+        }
+      }
+    },
+    dropFromPane() {
+      this.formDedigner.nowFormPane.delDragItem();
+      let outDragItem = this.formDedigner.nowFormPaneDragItem;
+      this.dropFromOuter(outDragItem.component, outDragItem);
+    },
+    drop(e) {
+      if (!this.edit) {
+        return;
+      }
+      let com = this.activeFormDragSrc;
+      this.dropToIndex = this.findLastToIndex(this.dropToIndex);
+      if (this === this.formDedigner.nowFormPane) {
+        // 如果父组件中记录的pane与本身相同，说明是自己内部拖动（包括拖出去又拖回来）
+        if (!this.dragedItem) {
+          return;
+        }
+        this.dropFromInner();
+      } else if (com && com.startsWith("el-")) {
+        // 如果不是内部拖动，先判断是不是设计器拖动过来的elment的组件
+        this.dropFromOuter(com);
+      } else {
+        // 如果不是内部拖动，也不是设计器拖动过来的组件，   在判断是不是从另一个pane拖动过来的，不是则停止
+        if (!this.formDedigner.nowFormPane) {
+          return;
+        }
+        this.dropFromPane();
+      }
+      this.dropToIndex = this.activeFormItemList.length - 1;
+      this.$emit("setNowFormPaneAndnowFormPaneDragItem", null, null);
+      this.activeFormDragSrc = null;
+    }, // 拖拽放置目标元素内事件，用于处理表单
+    findLastToIndex(toindex) {
+      if (
+        toindex > -1 &&
+        this.formItemSettingsValue.mustLastFormItem.indexOf(
+          this.activeFormItemList[toindex].component
+        ) + 1
+      ) {
+        return this.findLastToIndex(toindex - 1);
+      } else {
+        return toindex;
+      }
+    }, // 为了限制某些元素只能放到最后，对dropToIndex进行一次查询
+    myelformItemResize(ev, item) {
+      if (ev.target.onmousemove) {
+        ev.target.onmousemove = null;
+      } else {
+        let x = ev.clientX;
+        let formWidth = this.$refs.myform.$el.offsetWidth;
+        let itemCol = ev.target.offsetParent;
+        let itemColW = itemCol.offsetWidth;
+        ev.target.onmousemove = e => {
+          e = e || event;
+          this.$set(
+            item.settings,
+            "handleWidth",
+            ((itemColW + (e.clientX - x)) / formWidth) * 100 + "%"
+          );
+        };
+      }
+    },
+    myelformItemStopResize(e) {
+      e.target.onmousemove = null;
+    },
+    validField() {
+      let flag = false;
+      this.$refs.myform.validate(valid => {
+        flag = valid;
+        this.activeFormItemList.forEach(item => {
+          item.val = this.formModel[item.key];
+        });
+      });
+      return flag;
+    },
+    delFormItem(index, item) {
+      this.activeFormItemList.splice(index, 1);
+      this.dropToIndex = this.activeFormItemList.length - 1;
+    },
+    changemodel() {
+      let tempmodel = {};
+      let temprule = {};
+      this.showformItem = false;
+      this.activeFormItemList.forEach(item => {
+        tempmodel[item.key] = this.getDefauleVal(item);
+        temprule[item.key] = this.getDefaultRule(item, tempmodel[item.key]);
+      });
+      this.$nextTick(() => {
+        this.formModel = tempmodel;
+        this.formRule = temprule;
+        this.showformItem = true;
+      });
+    }
+  },
+  components: {
+    myElement: () => import("./myElement.vue")
+  },
+  computed: {
+    edit: {
+      get() {
+        return this.$store.state.formDesigner.edit;
+      }
+    },
+    layout: {
+      get() {
+        this.activeFormItemList.forEach(item => {
+          if (item.component === "el-textarea") {
+            return;
+          }
+          item.span = 24 / this.$store.state.formDesigner.layout;
+        });
+        return this.$store.state.formDesigner.layout;
+      }
+    },
+    openLayout: {
+      get() {
+        return this.$store.state.formDesigner.openLayout;
+      }
+    },
+    activeFormDragSrc: {
+      get() {
+        return this.$store.state.formDesigner.activeFormDragSrc;
+      },
+      set(val) {
+        this.$store.commit("formDesigner/setActiveFormDragSrc", val);
+      }
+    }
+  },
+  beforeMount() {
+    this.activeFormItemList = this.formItemList;
+  },
+  mounted() {
+    this.changemodel();
+  }
+};
+</script>

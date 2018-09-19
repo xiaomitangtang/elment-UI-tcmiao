@@ -110,6 +110,31 @@ const routes = [
         component: () => import("./subpages/loading.vue")
       },
       {
+        path: "tooltip",
+        name: "tooltip",
+        component: () => import("./subpages/tooltip.vue")
+      },
+      {
+        path: "popover",
+        name: "popover",
+        component: () => import("./subpages/popover.vue")
+      },
+      {
+        path: "timeline",
+        name: "timeline",
+        component: () => import("./subpages/timeline.vue")
+      },
+      {
+        path: "steps",
+        name: "steps",
+        component: () => import("./subpages/steps.vue")
+      },
+      {
+        path: "searchTree",
+        name: "searchTree",
+        component: () => import("./subpages/searchTree.vue")
+      },
+      {
         path: "html",
         name: "html",
         component: () => import("../standard/html.vue")

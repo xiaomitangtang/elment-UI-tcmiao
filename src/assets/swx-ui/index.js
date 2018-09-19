@@ -5,6 +5,9 @@ import pagenation from "./components/pagenation";
 import swxSwitch from "./components/switch";
 import transfer from "./components/transfer";
 import loading from "./components/loading";
+import timeline from "./components/timeline";
+import steps from "./components/steps";
+import searchTree from "./components/searchTree";
 const components = [
   portrait,
   search,
@@ -12,7 +15,10 @@ const components = [
   pagenation,
   swxSwitch,
   transfer,
-  loading
+  loading,
+  timeline,
+  steps,
+  searchTree
 ];
 
 export default {

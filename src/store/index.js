@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import demo from "./modules/demo";
 import socketDemo from "./modules/socket_io_demo";
+import formDesigner from "./modules/formDesigner";
 Vue.use(Vuex);
 
 export const mutations = {
@@ -20,7 +21,8 @@ export function createStore() {
   return new Vuex.Store({
     modules: {
       demo,
-      socketDemo
+      socketDemo,
+      formDesigner
     },
     state,
     actions,

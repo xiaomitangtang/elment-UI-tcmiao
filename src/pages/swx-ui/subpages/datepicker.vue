@@ -87,8 +87,8 @@ export default {
   data() {
     return {
       date1: "",
-      date2: "",
-      value7: "",
+      date2: "2018-9-12",
+      value7: ["2018-9-12", "2019-2-1"],
       dates: [],
       pickerOptions2: {
         shortcuts: [
