@@ -1,16 +1,17 @@
 <template>
     <div class='anka'>
         <div class="anka-title"><i class="anka-title-icon"></i> 案卡信息</div>
-        <div class="anka-item" v-for="(anka,index) in ankalist"
+        <div class="anka-item" v-for="(anka,index) in data"
              :class="{'active-anka-item':active===index}" :key="'anka'+index"
             @click="ankaClick(index,anka)"
         >
-            {{anka.text}}
+            {{anka.CaseCardTemplete.CaseCardName}}
         </div>
     </div>
 </template>
 <script>
 export default {
+  props: { data: { type: Array } },
   data() {
     return {
       active: 0,
@@ -27,8 +28,9 @@ export default {
     };
   },
   methods: {
-    ankaClick(index) {
+    ankaClick(index, anka) {
       this.active = index;
+      this.$emit("ankaClick", { index, anka });
     }
   }
 };

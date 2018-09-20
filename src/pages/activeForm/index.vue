@@ -3,15 +3,15 @@
 <div class="active-form-page">
   <el-row class="active-form-page-head"></el-row>
   <el-row class="active-form-page-body" >
-   <div class=" fullhight active-form-page-body-ankalist"><ankaList></ankaList></div>
+   <div class=" fullhight active-form-page-body-ankalist"><ankaList :data="ankaData" @ankaClick="ankaListItemClick"></ankaList></div>
     <div class=" fullhight active-form-page-body-anka-main">
-        <div class="active-form-page-body-anka-main-head">{{rtitle}}</div>
+        <div class="active-form-page-body-anka-main-head">{{currentAnka?currentAnka.CaseCardTemplete.CaseCardName:'案卡详情'}}</div>
         <div class="active-form-page-body-anka-main-body">
             <div class="fullhight active-form-page-body-anka-main-body-formlist">
-                <ankaformList></ankaformList>
+                <ankaformList :anka="currentAnka" @ankaTableClick="ankaTableClick"></ankaformList>
             </div>
             <div class=" fullhight active-form-page-body-anka-main-body-form">
-                <formDesigner></formDesigner>
+                <formDesigner ref="formdesigner" :data="currentTable"></formDesigner>
             </div>
         </div>
 <!--      <el-col class="fullhight" :span="4" ><dragmenu></dragmenu></el-col>
@@ -29,8 +29,144 @@ export default {
   name: "activeForm",
   data() {
     return {
-      rtitle: "审查起诉受理情况"
+      ankaData: [
+        {
+          CaseCardTemplete: {
+            CaseCardCode: "100000231",
+            CaseCardName: "支持起诉",
+            TabsList: [
+              {
+                TabsName: "支持起诉案件情况",
+                TableList: [
+                  {
+                    TableName: "基本情况",
+                    TableItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX-AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "01",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AqJJBXX-AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "01",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AJJB6XX-AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "01",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ],
+                    ExtItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX+AJLB_EXT",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX.BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "",
+                        sjlx: "01",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_EXT",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxfjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      currentAnka: null,
+      currentTable: null
     };
+  },
+  methods: {
+    ankaListItemClick(data) {
+      this.currentAnka = data.anka;
+      console.log(this.currentAnka);
+    },
+    ankaTableClick(data) {
+      console.log(data);
+      this.currentTable = data;
+    }
+  },
+  mounted() {
+    this.currentAnka = this.ankaData[0];
+    this.currentTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];
+    this.$api.activeForm.demoData().then(data => {
+      console.log(data);
+    });
+    console.log(this.currentAnka);
   },
   components: {
     ankaList: () => import("./ankalist"),

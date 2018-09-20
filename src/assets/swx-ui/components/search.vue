@@ -181,8 +181,8 @@ export default {
   border-radius: 6px;
   padding: 0 0 0 2px;
   background-color: #fff;
-  input {
-    height: 42px;
+  & > .el-input__inner {
+    height: 100%;
     line-height: 42px;
     border: 0;
   }
@@ -196,8 +196,9 @@ export default {
   border-radius: 6px;
   padding: 0 0 0 2px;
   background-color: #fff;
-  input {
-    height: 48px;
+  & > .el-input__inner {
+    height: 100%;
+    line-height: 48px;
     border: 0;
   }
   .swx-search-btn {

@@ -2,8 +2,8 @@
   <div class='target' @drop.stop.prevent="drop" @dragover.prevent.stop>
     <el-form ref="myform" :model="formModel" :rules="formRule" >
       <el-row class="myform-el-row" :gutter="5">
-        <template v-for="(item ,index) in activeFormItemList">
-          <div style="clear: both" v-if="index%layout===0&&openLayout"></div>
+        <template v-for="(item ,index) in formItemList">
+          <div style="clear: both" v-if="index%layout===0&&openLayout" :key="'formitemclear'+index"></div>
           <el-col class="my-element"  :style="{width:item.settings.handleWidth}"
                   :key="index" :span="item.span" :offset="item.offset"  :class="{editItem:edit}"
                   @dragstart.native="formItemDragStart(item,$event)" @dragenter.native="dropToIndex=index"
@@ -32,8 +32,7 @@ export default {
   },
   data() {
     return {
-      showformItem: true,
-      activeFormItemList: [],
+      showformItem: false,
       formData: {},
       formModalData: { settings: {} },
       nowFormItem: null,
@@ -82,7 +81,7 @@ export default {
         this.nowFormItem[key] = formModalData[key];
       });
     },
-    formItemClick({ index, item }) {
+    formItemClick({ item }) {
       if (!this.edit) {
         return;
       }
@@ -91,7 +90,7 @@ export default {
       temp.settings = this.getSettings(item);
       this.$emit("formDesignerpaneItemClick", this, temp);
     },
-    formItemDragStart(item, e) {
+    formItemDragStart(item) {
       if (!this.edit) {
         return;
       }
@@ -99,40 +98,30 @@ export default {
       this.$emit("setNowFormPaneAndnowFormPaneDragItem", this, this.dragedItem);
     },
     delDragItem() {
-      let dragItemIndex = this.activeFormItemList.indexOf(this.dragedItem);
-      this.activeFormItemList.splice(dragItemIndex, 1);
+      let dragItemIndex = this.formItemList.indexOf(this.dragedItem);
+      this.formItemList.splice(dragItemIndex, 1);
       this.dragedItem = null;
-      this.dropToIndex = this.activeFormItemList.length - 1;
+      this.dropToIndex = this.formItemList.length - 1;
     },
     dropFromInner() {
       if (this.dragedItem.component === "el-textarea") {
-        this.dropToIndex = this.activeFormItemList.length - 1;
+        this.dropToIndex = this.formItemList.length - 1;
       }
       if (this.dragedItem.component === "el-upload") {
-        this.dropToIndex = this.findLastToIndex(
-          this.activeFormItemList.length - 1
-        );
+        this.dropToIndex = this.findLastToIndex(this.formItemList.length - 1);
       }
-      let dragItemIndex = this.activeFormItemList.indexOf(this.dragedItem);
+      let dragItemIndex = this.formItemList.indexOf(this.dragedItem);
       if (this.dropToIndex + 1 > 0) {
         if (dragItemIndex < this.dropToIndex) {
-          this.activeFormItemList.splice(
-            this.dropToIndex + 1,
-            0,
-            this.dragedItem
-          );
-          this.activeFormItemList.splice(dragItemIndex, 1);
+          this.formItemList.splice(this.dropToIndex + 1, 0, this.dragedItem);
+          this.formItemList.splice(dragItemIndex, 1);
         } else if (dragItemIndex > this.dropToIndex) {
-          this.activeFormItemList.splice(
-            this.dropToIndex + 1,
-            0,
-            this.dragedItem
-          );
-          this.activeFormItemList.splice(dragItemIndex + 1, 1);
+          this.formItemList.splice(this.dropToIndex + 1, 0, this.dragedItem);
+          this.formItemList.splice(dragItemIndex + 1, 1);
         }
       } else {
-        this.activeFormItemList.splice(dragItemIndex, 1);
-        this.activeFormItemList.push(this.dragedItem);
+        this.formItemList.splice(dragItemIndex, 1);
+        this.formItemList.push(this.dragedItem);
       }
       this.dragedItem = null;
     },
@@ -155,22 +144,20 @@ export default {
         tempcom.settings = { type: "textarea", rows: 5 };
       }
       if (com === "el-upload") {
-        this.dropToIndex = this.findLastToIndex(
-          this.activeFormItemList.length - 1
-        );
+        this.dropToIndex = this.findLastToIndex(this.formItemList.length - 1);
       }
       if (this.dropToIndex + 1 > 0) {
-        this.activeFormItemList.splice(this.dropToIndex + 1, 0, tempcom);
+        this.formItemList.splice(this.dropToIndex + 1, 0, tempcom);
       } else {
         if (
-          this.activeFormItemList.length &&
+          this.formItemList.length &&
           this.formItemSettingsValue.mustLastFormItem.indexOf(
-            this.activeFormItemList[0].component
+            this.formItemList[0].component
           ) + 1
         ) {
-          this.activeFormItemList.splice(0, 0, tempcom);
+          this.formItemList.splice(0, 0, tempcom);
         } else {
-          this.activeFormItemList.push(tempcom);
+          this.formItemList.push(tempcom);
         }
       }
     },
@@ -179,7 +166,7 @@ export default {
       let outDragItem = this.formDedigner.nowFormPaneDragItem;
       this.dropFromOuter(outDragItem.component, outDragItem);
     },
-    drop(e) {
+    drop() {
       if (!this.edit) {
         return;
       }
@@ -201,7 +188,7 @@ export default {
         }
         this.dropFromPane();
       }
-      this.dropToIndex = this.activeFormItemList.length - 1;
+      this.dropToIndex = this.formItemList.length - 1;
       this.$emit("setNowFormPaneAndnowFormPaneDragItem", null, null);
       this.activeFormDragSrc = null;
     }, // 拖拽放置目标元素内事件，用于处理表单
@@ -209,7 +196,7 @@ export default {
       if (
         toindex > -1 &&
         this.formItemSettingsValue.mustLastFormItem.indexOf(
-          this.activeFormItemList[toindex].component
+          this.formItemList[toindex].component
         ) + 1
       ) {
         return this.findLastToIndex(toindex - 1);
@@ -242,21 +229,21 @@ export default {
       let flag = false;
       this.$refs.myform.validate(valid => {
         flag = valid;
-        this.activeFormItemList.forEach(item => {
+        this.formItemList.forEach(item => {
           item.val = this.formModel[item.key];
         });
       });
       return flag;
     },
-    delFormItem(index, item) {
-      this.activeFormItemList.splice(index, 1);
-      this.dropToIndex = this.activeFormItemList.length - 1;
+    delFormItem(index) {
+      this.formItemList.splice(index, 1);
+      this.dropToIndex = this.formItemList.length - 1;
     },
     changemodel() {
       let tempmodel = {};
       let temprule = {};
       this.showformItem = false;
-      this.activeFormItemList.forEach(item => {
+      this.formItemList.forEach(item => {
         tempmodel[item.key] = this.getDefauleVal(item);
         temprule[item.key] = this.getDefaultRule(item, tempmodel[item.key]);
       });
@@ -278,7 +265,7 @@ export default {
     },
     layout: {
       get() {
-        this.activeFormItemList.forEach(item => {
+        this.formItemList.forEach(item => {
           if (item.component === "el-textarea") {
             return;
           }
@@ -301,11 +288,6 @@ export default {
       }
     }
   },
-  beforeMount() {
-    this.activeFormItemList = this.formItemList;
-  },
-  mounted() {
-    this.changemodel();
-  }
+  mounted() {}
 };
 </script>

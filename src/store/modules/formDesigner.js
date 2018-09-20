@@ -2,7 +2,7 @@
 export default {
   namespaced: true,
   state: {
-    edit: true,
+    edit: false,
     allSettting: true,
     layout: 2,
     openLayout: false,

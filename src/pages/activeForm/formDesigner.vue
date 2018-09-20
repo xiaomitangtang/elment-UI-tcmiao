@@ -1,7 +1,7 @@
 <template>
   <div class='form-designer-main' @drop.stop.prevent @dragover.prevent>
     <el-row class="form-designer-main-header">
-      <span class="form-designer-main-header-text">{{panelTitle}}</span>
+      <span class="form-designer-main-header-text">{{data?data.TableName:"表单"}}</span>
       <!--<el-col :span="24" style="text-align: right">
         <el-select size="mini" v-if="edit" v-model="layout" style="margin-right: 10px;">
           <el-option v-for="item in formItemSettingsValue.layoutList" :label="item.text" :value="item.val"
@@ -15,8 +15,9 @@
         <el-button size="mini" type="primary" @click="changemodel">{{editVal}}</el-button>
         <el-button size="mini" @click="mysubmit">查看/保存</el-button>
       </el-col>-->
+      <el-button style="float: right;" @click="mysubmit">查看/保存</el-button>
     </el-row>
-    <el-row class="form-designer-pane" style="height: calc(100% - 50px);">
+    <el-row class="form-designer-pane" style="height: calc(100% - 30px);">
       <formDesignerpane ref="formDesignerMain" class="form-designer-pain-main"   :formItemList="activeFormData.mainActiveFormItemList"
                         :style="designerStyleObj.mainformheight" @formDesignerpaneItemClick="formDesignerpaneItemClick" @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
       ></formDesignerpane>
@@ -30,7 +31,6 @@
          </el-tab-pane>
        </el-tabs>
      </el-row>
-
     </el-row>
     <el-dialog class="designer-dialog" title="表单设置" :visible.sync="dialogFormVisible" width="1200px">
       <el-form :inline="true" label-width="120px">
@@ -592,9 +592,11 @@
 import formDesignerStatic from "./formDesignerStatic";
 export default {
   name: "formDesigner",
+  props: {
+    data: { type: Object }
+  },
   data() {
     return {
-      panelTitle: "基本信息",
       showtaps: false,
       activeFormData: {
         mainActiveFormItemList: [],
@@ -607,7 +609,6 @@ export default {
         paneheight: {},
         mainformheight: {}
       },
-
       formModalData: { settings: {} },
       formItemSettingsValue: formDesignerStatic.formItemSettingsValue,
       nowFormPane: null,
@@ -622,6 +623,7 @@ export default {
     };
   },
   methods: {
+    translateFormItem: formDesignerStatic.translateFormItem,
     groupAddItem: formDesignerStatic.groupAddItem,
     groupDelItem: formDesignerStatic.groupDelItem,
     isSettingVisible: formDesignerStatic.isSettingVisible,
@@ -739,16 +741,13 @@ export default {
         type: formValid ? "success" : "error"
       });
       if (formValid) {
+        let temp = {};
+        this.getAllPanes().forEach(i => {
+          temp = Object.assign({}, i.formModel);
+        });
+        console.log(temp);
         console.log(this.activeFormData);
       }
-      window.sessionStorage.setItem(
-        "formDesigner",
-        JSON.stringify(this.activeFormData)
-      );
-      window.sessionStorage.setItem(
-        "tabheight",
-        JSON.stringify(this.designerStyleObj)
-      );
     },
     changemodel() {
       this.$store.commit("formDesigner/setEdit", !this.edit);
@@ -756,6 +755,12 @@ export default {
         return;
       }
       this.getAllPanes().forEach(item => item.changemodel());
+    },
+    initForm() {
+      let tempForm = this.data.TableItems.map(i => this.translateFormItem(i));
+      this.activeFormData.mainActiveFormItemList = tempForm;
+      this.getAllPanes().forEach(item => item.changemodel());
+      console.log("tempForm", tempForm);
     }
   },
   components: {
@@ -796,14 +801,11 @@ export default {
       }
     }
   },
-  beforeMount() {
-    let fo = JSON.parse(window.sessionStorage.getItem("formDesigner"));
-    if (fo) {
-      let sty = JSON.parse(window.sessionStorage.getItem("tabheight"));
-      this.activeFormData = fo;
-      this.designerStyleObj = sty;
-      this.showtaps = !!sty.paneheight.height;
-    }
+  mounted() {
+    setTimeout(() => {
+      this.initForm();
+      this.getAllPanes().forEach(item => item.changemodel());
+    }, 1000);
   }
 };
 </script>

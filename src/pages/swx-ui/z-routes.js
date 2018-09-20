@@ -135,6 +135,11 @@ const routes = [
         component: () => import("./subpages/searchTree.vue")
       },
       {
+        path: "readme",
+        name: "readme",
+        component: () => import("./subpages/readme.vue")
+      },
+      {
         path: "html",
         name: "html",
         component: () => import("../standard/html.vue")
@@ -190,8 +195,12 @@ const routes = [
         component: () => import("../standard/edm.vue")
       },
       {
+        path: "/",
+        redirect: { name: "readme" }
+      },
+      {
         path: "*",
-        redirect: { name: "uiViews" }
+        redirect: { name: "readme" }
       }
     ]
   }

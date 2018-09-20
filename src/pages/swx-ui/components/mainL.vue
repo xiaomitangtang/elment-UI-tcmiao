@@ -124,6 +124,12 @@ export default {
           children: [
             {
               id: "1-1",
+              routername: "/swxUI/readme",
+              title: "说明",
+              icon: ""
+            },
+            {
+              id: "1-1",
               routername: "/swxUI/uiViews",
               title: "ui视图",
               icon: ""

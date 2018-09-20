@@ -1,15 +1,18 @@
 <template>
     <div class='anka-form'>
-        <div class="anka-form-part" v-for="(form,index) in forms" :key="'form'+index">
-            <div class="form-list-title">{{form.title}}</div>
+        <div class="anka-form-part" v-for="(form,index) in anka?anka.CaseCardTemplete.TabsList:[]" :key="'form'+index">
+            <div class="form-list-title">{{form.TabsName}}</div>
             <ul class="form-list-ul">
-                <li class="form-list-item" :class="{'anka-form-active':activeItem===item}" @click="formClick(item)" v-for="(item,index2) in form.list" :key="'item'+index+index2">{{item.text}}</li>
+                <li class="form-list-item" :class="{'anka-form-active':activeItem===item}" @click="formClick(item)" v-for="(item,index2) in form.TableList" :key="'item'+index+index2">{{item.TableName}}</li>
             </ul>
         </div>
     </div>
 </template>
 <script>
 export default {
+  props: {
+    anka: { type: Object }
+  },
   data() {
     return {
       activeItem: null,
@@ -32,11 +35,13 @@ export default {
   methods: {
     formClick(item) {
       this.activeItem = item;
-      this.$emit("formItemClick", item);
+      this.$emit("ankaTableClick", item);
     }
   },
   mounted() {
-    this.activeItem = this.forms[0].list[0];
+    this.activeItem = this.anka
+      ? this.anka.CaseCardTemplete.TabsList[0].TableList[0]
+      : null;
   }
 };
 </script>
