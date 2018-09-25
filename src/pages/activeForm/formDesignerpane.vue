@@ -288,6 +288,10 @@ export default {
       }
     }
   },
-  mounted() {}
+  watch: {
+    formItemList() {
+      this.changemodel();
+    }
+  }
 };
 </script>

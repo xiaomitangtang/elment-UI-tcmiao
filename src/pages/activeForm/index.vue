@@ -23,7 +23,6 @@
 </div>
 
 </template>
-
 <script>
 export default {
   name: "activeForm",
@@ -33,18 +32,18 @@ export default {
         {
           CaseCardTemplete: {
             CaseCardCode: "100000231",
-            CaseCardName: "支持起诉",
+            CaseCardName: "支持起诉demo",
             TabsList: [
               {
                 TabsName: "支持起诉案件情况",
                 TableList: [
                   {
-                    TableName: "基本情况",
+                    TableName: "基本情况demo",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX-AJLB_MC",
                         zdzwmc: "小白",
-                        sfjh: "true/false",
+                        sfjh: true,
                         bdfz: {
                           bbfz: false,
                           kbfzzd: [
@@ -61,7 +60,7 @@ export default {
                           kxxjd: false,
                           kjxsdfs: "显示文本",
                           sffx: false,
-                          sfjs: true,
+                          sfjs: false,
                           ztys: "红色Red"
                         }
                       },
@@ -161,12 +160,15 @@ export default {
     }
   },
   mounted() {
-    this.currentAnka = this.ankaData[0];
-    this.currentTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];
-    this.$api.activeForm.demoData().then(data => {
-      console.log(data);
-    });
-    console.log(this.currentAnka);
+    /*    this.currentAnka = this.ankaData[0];
+    this.currentTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];*/
+    this.$api.activeForm
+      .demoData({ params: { akmbbh: "100000231" } })
+      .then(data => {
+        this.ankaData = data.data;
+        this.currentAnka = this.ankaData[0];
+        this.currentTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];
+      });
   },
   components: {
     ankaList: () => import("./ankalist"),
@@ -216,7 +218,7 @@ export default {
         }
         .active-form-page-body-anka-main-body-form {
           float: left;
-          padding: 10px;
+          padding: 10px 0 10px 10px;
           width: calc(100% - 200px);
         }
       }

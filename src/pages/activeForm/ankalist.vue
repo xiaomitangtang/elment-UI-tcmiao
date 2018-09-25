@@ -14,17 +14,7 @@ export default {
   props: { data: { type: Array } },
   data() {
     return {
-      active: 0,
-      ankalist: [
-        { text: "审查起诉受理情况" },
-        { text: "案件办理及审结情况" },
-        { text: "审查起诉出庭、判决情况" },
-        { text: "单位犯罪情况" },
-        { text: "侦查活动监督情况" },
-        { text: "审判活动监督情况" },
-        { text: "检察建议及线索移交情况" },
-        { text: "受理信息" }
-      ]
+      active: 0
     };
   },
   methods: {

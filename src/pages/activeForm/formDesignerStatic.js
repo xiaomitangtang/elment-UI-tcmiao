@@ -108,7 +108,7 @@ const userableSetting = {
   uploadUrl: true,
   remoteUrl: true,
   tableColumns: true
-};
+}; //设置项的默认是否展示，如果此处该项对应值为false，则在VUEX 中formDesigner中allSettting为true时，该项才会展示，否则不会展示，即用户不可操作项
 const formItemSettingsValue = {
   // inputType: ['text', 'textarea', 'number', 'password'],
   layoutList: [
@@ -235,7 +235,7 @@ const formItemSettingsValue = {
     qq: /^[1-9][0-9]{4,}$/
   },
   mustLastFormItem: ["el-textarea", "el-upload"]
-};
+}; //表单组件中所用到的静态变量集合
 function getSettings(item) {
   let settings = null;
   switch (item.component) {
@@ -244,7 +244,7 @@ function getSettings(item) {
         min: 1,
         max: 10,
         step: 1,
-        precision: 1,
+        precision: 0,
         size: "",
         disabled: false,
         controls: true,
@@ -356,7 +356,7 @@ function getSettings(item) {
         placeholder: "请选择",
         "automatic-dropdown": true,
         "no-data-text": "无数据",
-        "select-data": [{ value: "demo", label: "demo" }]
+        "select-data": [{ dm: "Y", mc: "是" }, { dm: "N", mc: "否" }]
       };
       break;
     case " el-option":
@@ -574,7 +574,7 @@ function getSettings(item) {
       settings = {};
   }
   return Object.assign({}, settings, item.settings);
-}
+} //根据不同的表单元素进行判断并返回默认值的设置项
 function getDefauleVal(item) {
   if (item.val) {
     if (item.component === "el-time-picker") {
@@ -614,7 +614,7 @@ function getDefauleVal(item) {
     default:
       return "";
   }
-}
+} //根据不同的表单元素进行判断并返回默认值
 function getDefaultRule(item, val) {
   if (!item.isRequire) {
     return [];
@@ -705,7 +705,7 @@ function getDefaultRule(item, val) {
     });
   }
   return tempRule;
-}
+} //根据不同的表单元素进行判断并返回默认的验证规则
 function groupAddItem(data, index, type) {
   let tempindex = data.length;
   switch (type) {
@@ -751,7 +751,7 @@ function groupAddItem(data, index, type) {
       });
       break;
   }
-}
+} //用于给需要手动控制数据项的表单元素加入新的数据
 function groupDelItem(data, index, type) {
   if (data.length > 1) {
     data.splice(index, 1);
@@ -800,27 +800,33 @@ function groupDelItem(data, index, type) {
         break;
     }
   }
-}
+} //用于给需要手动控制数据项的表单元素删除元素
 function isSettingVisible(setting, val) {
   return (
     setting.hasOwnProperty(val) &&
     (this.$store.state.formDesigner.allSettting || userableSetting[val])
   );
-}
+} //此方法用于返回相对应的设置项是否展示出来给用户进行设置
 function translateFormItem(item) {
   let tempItem = {};
   tempItem.key = item.zdywmc;
   tempItem.label = item.zdzwmc || "";
   tempItem.span = 24 / this.$store.state.formDesigner.layout;
-  tempItem.component = "el-select";
+  // tempItem.component = "el-select";
+  tempItem.component = item.sjlx;
   tempItem.offset = 0;
-  let textW = tempItem.label.replace(/[\u4e00-\u9fa5]/g, "aa").length * 10 + 12;
-  tempItem.labelWidth = textW === 12 ? 0 : Math.max(textW, 50);
+  let textW = tempItem.label.replace(/[\u4e00-\u9fa5]/g, "aa").length * 8 + 12;
+  tempItem.labelWidth = textW === 12 ? 0 : Math.min(Math.max(textW, 120), 180);
   tempItem.settings = getSettings(tempItem);
-  tempItem.settings.disabled = !!item.sfjh;
+  // tempItem.settings.disabled = !item.sfjh;
+  tempItem.settings.disabled = false;
   tempItem.settings.placeholder = item.mrz;
+  if (item.sjygl) {
+    tempItem.settings.remote = true;
+    tempItem.settings.remoteUrl = "/getSJYByProcedure?P_LBBM=" + item.sjygl;
+  }
   return tempItem;
-}
+} //此方法用于将原来案卡的数据，进行一次转换，转成本表单容器所能接受的形式
 export default {
   formItemSettingsValue,
   getSettings,

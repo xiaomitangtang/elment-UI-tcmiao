@@ -1,11 +1,11 @@
 <template>
       <div>
-        <el-input v-if="innerdata.component==='el-input'||innerdata.component==='el-textarea'"  style="width: 100%" v-bind="innerdata.settings" v-model="formModel[innerdata.key]"></el-input>
+        <el-input v-if="innerdata.component==='el-input'||innerdata.component==='el-textarea'"  v-bind="innerdata.settings" v-model="formModel[innerdata.key]"></el-input>
         <el-rate v-else-if="innerdata.component==='el-rate'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings"></el-rate>
         <el-input-number v-else-if="innerdata.component==='el-input-number'" v-model.number="formModel[innerdata.key]"  v-bind="innerdata.settings" ></el-input-number>
         <el-switch v-else-if="innerdata.component==='el-switch'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings"></el-switch>
         <el-color-picker v-else-if="innerdata.component==='el-color-picker'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings"></el-color-picker>
-        <el-date-picker v-else-if="innerdata.component==='el-date-picker'" v-model="formModel[innerdata.key]"  v-bind="innerdata.settings" :type="innerdata.settings.datepickertype"></el-date-picker>
+        <el-date-picker style="width: 100%;" v-else-if="innerdata.component==='el-date-picker'" v-model="formModel[innerdata.key]"  v-bind="innerdata.settings" :type="innerdata.settings.datepickertype"></el-date-picker>
         <el-slider v-else-if="innerdata.component==='el-slider'" v-model="formModel[innerdata.key]"  v-bind="innerdata.settings"></el-slider>
         <el-time-select  v-else-if="innerdata.component==='el-time-select'" v-model="formModel[innerdata.key]"  v-bind="innerdata.settings"   :picker-options="innerdata.settings['timeselectpicker-options']"></el-time-select>
         <el-time-picker  v-else-if="innerdata.component==='el-time-picker'" v-model="formModel[innerdata.key]"  v-bind="innerdata.settings"   :picker-options="innerdata.settings['timepicker-options']"></el-time-picker>
@@ -22,8 +22,10 @@
           <el-checkbox v-if="innerdata.settings.hasOwnProperty('check-group-data')&&!innerdata.settings.checkbutton"  v-for="item in innerdata.settings['check-group-data']" :key="item.label" :disabled="item.disabled" :label="item.label" :border="item.border" :size="innerdata.settings.size" :indeterminate="item.indeterminate" :checked="item.checked">{{item.text}}</el-checkbox>
           <el-checkbox-button v-if="innerdata.settings.hasOwnProperty('check-group-data')&&innerdata.settings.checkbutton"  v-for="item in innerdata.settings['check-group-data']" :key="item.label" :disabled="item.disabled" :label="item.label" :border="item.border" :size="innerdata.settings.size" :indeterminate="item.indeterminate" :checked="item.checked">{{item.text}}</el-checkbox-button>
         </el-checkbox-group>
-        <el-select v-else-if="innerdata.component==='el-select'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings">
-          <el-option v-for="item in innerdata.settings['select-data']" :key="item.label" :value="item.value"></el-option>
+        <el-select v-else-if="innerdata.component==='el-select'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings"
+        :filterable="innerdata.settings['select-data'].length>10"
+        >
+          <el-option v-for="item in innerdata.settings['select-data']" :key="item.label"    :label="item.mc" :value="item.mc+'---'+item.dm"></el-option>
         </el-select>
         <el-cascader v-else-if="innerdata.component==='el-cascader'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings"  :options="innerdata.settings['cascader-data']||[]"></el-cascader>
         <el-upload ref="upload" v-else-if="innerdata.component==='el-upload'" v-bind="innerdata.settings"  :action="innerdata.settings.uploadUrl ||'http://'"   :file-list="fileList"
@@ -64,10 +66,10 @@ export default {
       }
       this.$http.get(this.innerdata.settings.remoteUrl).then(
         res => {
-          if (res.status === "success") {
+          if (res.data.status === "success") {
             switch (this.innerdata.component) {
               case "el-select":
-                this.innerdata.settings["select-data"] = res.data;
+                this.innerdata.settings["select-data"] = res.data.data;
                 break;
               case "el-cascader":
                 this.innerdata.settings["cascader-data"] = res.data;

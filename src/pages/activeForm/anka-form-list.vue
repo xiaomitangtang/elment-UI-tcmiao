@@ -38,10 +38,10 @@ export default {
       this.$emit("ankaTableClick", item);
     }
   },
-  mounted() {
-    this.activeItem = this.anka
-      ? this.anka.CaseCardTemplete.TabsList[0].TableList[0]
-      : null;
+  watch: {
+    anka(n) {
+      this.activeItem = n ? n.CaseCardTemplete.TabsList[0].TableList[0] : null;
+    }
   }
 };
 </script>
@@ -49,6 +49,7 @@ export default {
 .anka-form {
   padding: 20px 15px;
   height: 100%;
+  overflow: auto;
   .anka-form-part {
     .form-list-title {
       color: #40638e;

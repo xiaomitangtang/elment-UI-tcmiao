@@ -15,12 +15,12 @@
         <el-button size="mini" type="primary" @click="changemodel">{{editVal}}</el-button>
         <el-button size="mini" @click="mysubmit">查看/保存</el-button>
       </el-col>-->
-      <el-button style="float: right;" @click="mysubmit">查看/保存</el-button>
+      <el-button style=" float: right;" @click="mysubmit" size="mini">查看/保存</el-button>
     </el-row>
-    <el-row class="form-designer-pane" style="height: calc(100% - 30px);">
-      <formDesignerpane ref="formDesignerMain" class="form-designer-pain-main"   :formItemList="activeFormData.mainActiveFormItemList"
-                        :style="designerStyleObj.mainformheight" @formDesignerpaneItemClick="formDesignerpaneItemClick" @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
-      ></formDesignerpane>
+      <el-row class="form-designer-pane">
+        <formDesignerpane ref="formDesignerMain" class="form-designer-pain-main"  :formItemList="activeFormData.mainActiveFormItemList"
+                          :style="designerStyleObj.mainformheight" @formDesignerpaneItemClick="formDesignerpaneItemClick" @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
+        ></formDesignerpane>
      <el-row :style="designerStyleObj.paneheight">
        <el-tabs v-if="showtaps&&activeFormData.tabs.length" class="form-tabs"  type="card"     v-model="nowformPaneName"
                 :editable="edit" @edit="formDesignerTabEdit" >
@@ -31,7 +31,9 @@
          </el-tab-pane>
        </el-tabs>
      </el-row>
+
     </el-row>
+
     <el-dialog class="designer-dialog" title="表单设置" :visible.sync="dialogFormVisible" width="1200px">
       <el-form :inline="true" label-width="120px">
         <el-row> <!--输入框-->
@@ -741,12 +743,29 @@ export default {
         type: formValid ? "success" : "error"
       });
       if (formValid) {
-        let temp = {};
+        let temp = [];
         this.getAllPanes().forEach(i => {
-          temp = Object.assign({}, i.formModel);
+          temp = temp.concat(
+            Object.keys(i.formModel).map(j => {
+              if (typeof i.formModel[j].getTime === "function") {
+                return {
+                  field: j,
+                  value: "TypeIsDate=" + i.formModel[j].getTime()
+                };
+              } else {
+                return { field: j, value: i.formModel[j] };
+              }
+            })
+          );
         });
-        console.log(temp);
-        console.log(this.activeFormData);
+        this.$api.activeForm.saveAnKa(temp).then(
+          res => {
+            console.log(res);
+          },
+          err => {
+            console.log(err);
+          }
+        );
       }
     },
     changemodel() {
@@ -757,10 +776,9 @@ export default {
       this.getAllPanes().forEach(item => item.changemodel());
     },
     initForm() {
-      let tempForm = this.data.TableItems.map(i => this.translateFormItem(i));
-      this.activeFormData.mainActiveFormItemList = tempForm;
-      this.getAllPanes().forEach(item => item.changemodel());
-      console.log("tempForm", tempForm);
+      this.activeFormData.mainActiveFormItemList = this.data.TableItems.map(i =>
+        this.translateFormItem(i)
+      );
     }
   },
   components: {
@@ -801,19 +819,23 @@ export default {
       }
     }
   },
-  mounted() {
-    setTimeout(() => {
+  watch: {
+    data() {
       this.initForm();
-      this.getAllPanes().forEach(item => item.changemodel());
-    }, 1000);
+    }
   }
 };
 </script>
 <style lang="less">
 .form-designer-main {
   height: 100%;
+  padding-right: 10px;
+  overflow: auto;
+
   .form-designer-main-header {
-    height: 30px;
+    height: 40px;
+    line-height: 30px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #d3d3d3;
     .form-designer-main-header-text {
       display: inline-block;
@@ -829,11 +851,10 @@ export default {
 
 .form-designer-pane {
   position: relative;
-  height: calc(100% - 30px);
+  /*height: calc(100% - 30px);*/
   background-color: #fff;
   padding: 0;
   border-radius: 10px;
-  /*border: 1px solid #dddddd;*/
   .form-designer-pain-main {
     width: 100%;
     overflow: auto;
