@@ -1,22 +1,22 @@
 <template>
-  <div class='target' @drop.stop.prevent="drop" @dragover.prevent.stop>
-    <el-form ref="myform" :model="formModel" :rules="formRule" >
+  <div class='target' @drop.stop.prevent="drop" @dragover.prevent.stop >
+    <el-form ref="myform" :model="formModel" :rules="formRule" label-position="left">
       <el-row class="myform-el-row" :gutter="5">
         <template v-for="(item ,index) in formItemList">
           <div style="clear: both" v-if="index%layout===0&&openLayout" :key="'formitemclear'+index"></div>
           <el-col class="my-element"  :style="{width:item.settings.handleWidth}"
-                  :key="index" :span="item.span" :offset="item.offset"  :class="{editItem:edit}"
+                  :key="panelName+'col'+index" :span="item.span" :offset="item.offset"  :class="{editItem:edit}"
                   @dragstart.native="formItemDragStart(item,$event)" @dragenter.native="dropToIndex=index"
                   @dblclick.native="formItemClick({index,item})">
-            <el-button v-if="edit" size="mini" type="text" icon="el-icon-circle-close"  class="close-item" @click.stop="delFormItem(index,item)"></el-button>
-            <el-form-item v-if="showformItem" :label="item.label" :label-width="item.labelWidth?(item.labelWidth+'px'):'1px'" :prop="item.key">
-              <myElement  :draggable="edit"  :formModel="formModel" :innerdata="item"></myElement>
+            <el-button      v-if="edit" size="mini" type="text" icon="el-icon-circle-close"  class="close-item" @click.stop="delFormItem(index,item)"></el-button>
+            <el-form-item   v-if="showformItem" :label="item.label" :label-width="item.labelWidth?(item.labelWidth+'px'):'1px'" :prop="item.key">
+              <myElement    :draggable="edit"   :formModel="formModel" :innerdata="item"></myElement>
             </el-form-item>
-            <!--<div class="resizeBar" v-if="edit" @click.stop.passive @mousedown.stop.prevent="myelformItemResize($event,item)" @mouseleave.stop.prevent="myelformItemStopResize" @mouseup.stop.prevent="myelformItemStopResize"></div>-->
-            <div class="changeWidthbtns" v-if="edit" @click.stop.prevent>
+            <div class="resizeBar" v-if="edit" @click.stop.passive @mousedown.stop.prevent="myelformItemResize($event,item)"  ></div>
+      <!--      <div class="changeWidthbtns" v-if="edit" @click.stop.prevent>
               <span @click="changeFormItemWidth(item,'del')" class="el-icon-remove"></span>
               <span @click="changeFormItemWidth(item,'add')" class="el-icon-circle-plus"></span>
-            </div>
+            </div>-->
           </el-col>
         </template>
       </el-row>
@@ -28,11 +28,12 @@ import formDesignerStatic from "./formDesignerStatic";
 export default {
   name: "formDesignerpane",
   props: {
-    formItemList: { type: Array, default: () => [] }
+    formItemList: { type: Array, default: () => [] },
+    panelName: { type: String }
   },
   data() {
     return {
-      showformItem: false,
+      showformItem: true,
       formData: {},
       formModalData: { settings: {} },
       nowFormItem: null,
@@ -48,7 +49,7 @@ export default {
     getSettings: formDesignerStatic.getSettings,
     getDefauleVal: formDesignerStatic.getDefauleVal,
     getDefaultRule: formDesignerStatic.getDefaultRule,
-    changeFormItemWidth(item, type) {
+    /*    changeFormItemWidth(item, type) {
       if (type === "del") {
         if (item.span < 4) {
           return;
@@ -60,17 +61,13 @@ export default {
         }
         item.span++;
       }
-    },
+    },*/
     saveFormStyle(formModalData) {
       if (formModalData.span !== this.nowFormItem.span) {
         formModalData.settings.handleWidth = null;
       }
       if (formModalData.label) {
         formModalData.label = formModalData.label.trim();
-        let textW =
-          formModalData.label.replace(/[\u4e00-\u9fa5]/g, "aa").length * 10 +
-          12;
-        formModalData.labelWidth = textW === 12 ? 0 : Math.max(textW, 50);
       }
       if (formModalData.texts) {
         formModalData.settings.texts = formModalData.texts
@@ -86,6 +83,7 @@ export default {
         return;
       }
       let temp = Object.assign({}, item);
+      temp.settings = Object.assign({}, item.settings);
       this.nowFormItem = item;
       temp.settings = this.getSettings(item);
       this.$emit("formDesignerpaneItemClick", this, temp);
@@ -205,25 +203,22 @@ export default {
       }
     }, // 为了限制某些元素只能放到最后，对dropToIndex进行一次查询
     myelformItemResize(ev, item) {
-      if (ev.target.onmousemove) {
-        ev.target.onmousemove = null;
-      } else {
-        let x = ev.clientX;
-        let formWidth = this.$refs.myform.$el.offsetWidth;
-        let itemCol = ev.target.offsetParent;
-        let itemColW = itemCol.offsetWidth;
-        ev.target.onmousemove = e => {
-          e = e || event;
-          this.$set(
-            item.settings,
-            "handleWidth",
-            ((itemColW + (e.clientX - x)) / formWidth) * 100 + "%"
-          );
-        };
-      }
+      let x = ev.clientX;
+      let formWidth = this.$refs.myform.$el.offsetWidth;
+      let itemCol = ev.target.offsetParent;
+      let itemColW = itemCol.offsetWidth;
+      this.formItemMouseMove = e => {
+        e = e || event;
+        let tempWidth = ((itemColW + (e.clientX - x)) / formWidth) * 100;
+        if (tempWidth < 30 || tempWidth > 100) return;
+        this.$set(item.settings, "handleWidth", tempWidth + "%");
+      };
+      window.addEventListener("mousemove", this.formItemMouseMove);
+      window.addEventListener("mouseup", this.myelformItemStopResize);
     },
-    myelformItemStopResize(e) {
-      e.target.onmousemove = null;
+    myelformItemStopResize() {
+      window.removeEventListener("mousemove", this.formItemMouseMove);
+      window.removeEventListener("mouseup", this.myelformItemStopResize);
     },
     validField() {
       let flag = false;
@@ -240,6 +235,7 @@ export default {
       this.dropToIndex = this.formItemList.length - 1;
     },
     changemodel() {
+      console.log("changemodel");
       let tempmodel = {};
       let temprule = {};
       this.showformItem = false;
@@ -292,6 +288,12 @@ export default {
     formItemList() {
       this.changemodel();
     }
+  },
+  mounted() {
+    this.$emit("PanelMounted", this);
+  },
+  beforeDestroy() {
+    this.$emit("PanelDestory", this);
   }
 };
 </script>

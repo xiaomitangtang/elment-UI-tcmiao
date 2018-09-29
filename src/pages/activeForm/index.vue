@@ -8,10 +8,14 @@
         <div class="active-form-page-body-anka-main-head">{{currentAnka?currentAnka.CaseCardTemplete.CaseCardName:'案卡详情'}}</div>
         <div class="active-form-page-body-anka-main-body">
             <div class="fullhight active-form-page-body-anka-main-body-formlist">
-                <ankaformList :anka="currentAnka" @ankaTableClick="ankaTableClick"></ankaformList>
+                <ankaformList :anka="currentAnka" :currenTable="currenShowTable" @ankaTableClick="ankaTableClick"
+                    @dragItem="ankaFormListDragItem"
+                    @dropedOnTitle="ankaFormListDropedOnTitle"
+                    @dropedOnItem="ankaFormListDropedOnItem"
+                ></ankaformList>
             </div>
             <div class=" fullhight active-form-page-body-anka-main-body-form">
-                <formDesigner ref="formdesigner" :data="currentTable"></formDesigner>
+                <formDesigner ref="formdesigner" :data="tableList"  :currenTable="currenShowTable" @currentTableChange="ankaTableClick"></formDesigner>
             </div>
         </div>
 <!--      <el-col class="fullhight" :span="4" ><dragmenu></dragmenu></el-col>
@@ -41,7 +45,7 @@ export default {
                     TableName: "基本情况demo",
                     TableItems: [
                       {
-                        zdywmc: "TYYW_GG_AJJBXX-AJLB_MC",
+                        zdywmc: "TYYW_GG_AJJBXX--AJLB_MC1",
                         zdzwmc: "小白",
                         sfjh: true,
                         bdfz: {
@@ -53,8 +57,8 @@ export default {
                         },
                         sjybm: "0",
                         mrz: "999",
-                        sjlx: "01",
-                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        sjlx: "el-image",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC1",
                         zdFields: {
                           fhzfs: "返回文本",
                           kxxjd: false,
@@ -65,7 +69,7 @@ export default {
                         }
                       },
                       {
-                        zdywmc: "TYYW_GG_AqJJBXX-AJLB_MC",
+                        zdywmc: "TYYW_GG_AqJJBXX--AJLB_MC1",
                         zdzwmc: "小白",
                         sfjh: "true/false",
                         bdfz: {
@@ -77,7 +81,7 @@ export default {
                         },
                         sjybm: "0",
                         mrz: "999",
-                        sjlx: "01",
+                        sjlx: "el-input",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
                           fhzfs: "返回文本",
@@ -89,7 +93,7 @@ export default {
                         }
                       },
                       {
-                        zdywmc: "TYYW_GG_AJJB6XX-AJLB_MC",
+                        zdywmc: "TYYW_GG_AJJB6XX--AJLB_MC",
                         zdzwmc: "小白",
                         sfjh: "true/false",
                         bdfz: {
@@ -100,8 +104,8 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
-                        sjlx: "01",
+                        mrz: "912",
+                        sjlx: "el-upload",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
                           fhzfs: "返回文本",
@@ -124,10 +128,321 @@ export default {
                             "TYYW_GG_AJJBXX+BMSAH2"
                           ]
                         },
-                        sjybm: "0",
+                        sjybm: "1",
                         mrz: "",
-                        sjlx: "01",
-                        ysjzd: "TYYW_GG_AJJBXX+AJLB_EXT",
+                        sjlx: "el-upload",
+                        ysjzd: "TYYdW_GG_AJJBXX+AJLB_EXT",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxfjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    TableName: "基本情况demo",
+                    TableItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX--AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: true,
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "el-image",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: false,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AqJJBXX--AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "el-input",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AJJB6XX--AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "912",
+                        sjlx: "el-upload",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ],
+                    ExtItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX+AJLB_EXT",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX.BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "1",
+                        mrz: "",
+                        sjlx: "el-upload",
+                        ysjzd: "TYYdW_GG_AJJBXX+AJLB_EXT",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxfjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                TabsName: "支持起诉案件123情况",
+                TableList: [
+                  {
+                    TableName: "基本情况123demo",
+                    TableItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX--AJLB_MC1",
+                        zdzwmc: "小白",
+                        sfjh: true,
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "el-image",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC1",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: false,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AqJJBXX--AJLB_MC1",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "el-input",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AJJB6XX--AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "912",
+                        sjlx: "el-upload",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ],
+                    ExtItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX+AJLB_EXT",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX.BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "1",
+                        mrz: "",
+                        sjlx: "el-upload",
+                        ysjzd: "TYYdW_GG_AJJBXX+AJLB_EXT",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxfjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    TableName: "基本情况d1231emo",
+                    TableItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX--AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: true,
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "el-image",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: false,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AqJJBXX--AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "999",
+                        sjlx: "el-input",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      },
+                      {
+                        zdywmc: "TYYW_GG_AJJB6XX--AJLB_MC",
+                        zdzwmc: "小白",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX+BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "0",
+                        mrz: "912",
+                        sjlx: "el-upload",
+                        ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
+                        zdFields: {
+                          fhzfs: "返回文本",
+                          kxxjd: false,
+                          kjxsdfs: "显示文本",
+                          sffx: false,
+                          sfjs: true,
+                          ztys: "红色Red"
+                        }
+                      }
+                    ],
+                    ExtItems: [
+                      {
+                        zdywmc: "TYYW_GG_AJJBXX+AJLB_EXT",
+                        sfjh: "true/false",
+                        bdfz: {
+                          bbfz: false,
+                          kbfzzd: [
+                            "TYYW_GG_AJJBXX.BMSAH",
+                            "TYYW_GG_AJJBXX+BMSAH2"
+                          ]
+                        },
+                        sjybm: "1",
+                        mrz: "",
+                        sjlx: "el-upload",
+                        ysjzd: "TYYdW_GG_AJJBXX+AJLB_EXT",
                         zdFields: {
                           fhzfs: "返回文本",
                           kxfjd: false,
@@ -146,7 +461,9 @@ export default {
         }
       ],
       currentAnka: null,
-      currentTable: null
+      tableList: null,
+      formListDragData: null,
+      currenShowTable: null
     };
   },
   methods: {
@@ -156,18 +473,44 @@ export default {
     },
     ankaTableClick(data) {
       console.log(data);
-      this.currentTable = data;
+      this.currenShowTable = data;
+    },
+    ankaFormListDragItem(data) {
+      this.formListDragData = data;
+    },
+    getOrignItem() {
+      let dragdata = this.formListDragData;
+      return dragdata.tab.TableList.splice(
+        dragdata.tab.TableList.indexOf(dragdata.item),
+        1
+      )[0];
+    },
+    ankaFormListDropedOnTitle({ tab }) {
+      tab.TableList.push(this.getOrignItem());
+    },
+    ankaFormListDropedOnItem({ tab, itemIndex }) {
+      tab.TableList.splice(itemIndex, 0, this.getOrignItem());
+    },
+    getAllTable(TabsList = []) {
+      let alltable = TabsList.map(i => i.TableList).flat();
+      this.currenShowTable = alltable[0];
+      return alltable;
     }
   },
   mounted() {
-    /*    this.currentAnka = this.ankaData[0];
-    this.currentTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];*/
+    this.currentAnka = this.ankaData[0];
+    this.tableList = this.currentAnka.CaseCardTemplete.TabsList[0].TableList;
+    this.tableList = this.getAllTable(
+      this.currentAnka.CaseCardTemplete.TabsList
+    );
     this.$api.activeForm
       .demoData({ params: { akmbbh: "100000231" } })
       .then(data => {
         this.ankaData = data.data;
         this.currentAnka = this.ankaData[0];
-        this.currentTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];
+        this.tableList = this.getAllTable(
+          this.currentAnka.CaseCardTemplete.TabsList
+        );
       });
   },
   components: {
@@ -227,5 +570,11 @@ export default {
   .fullhight {
     height: 100%;
   }
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
 }
 </style>

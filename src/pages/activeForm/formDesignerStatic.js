@@ -234,7 +234,8 @@ const formItemSettingsValue = {
     hardPassword: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$/, // 必须包含大小写字母和数字的组合，不能使用特殊字符，长度在8-10之间
     qq: /^[1-9][0-9]{4,}$/
   },
-  mustLastFormItem: ["el-textarea", "el-upload"]
+  // mustLastFormItem: ["el-textarea", "el-upload"]
+  mustLastFormItem: ["el-textarea"]
 }; //表单组件中所用到的静态变量集合
 function getSettings(item) {
   let settings = null;
@@ -484,7 +485,7 @@ function getSettings(item) {
         accept: "",
         drag: false,
         buttonType: "primary",
-        size: "",
+        size: "mini",
         plain: false,
         round: false,
         circle: false,
@@ -493,9 +494,12 @@ function getSettings(item) {
         multiple: false,
         "show-file-list": true,
         "list-type": "text",
-        "auto-upload": false,
+        "auto-upload": true,
         uploadUrl: "https://"
       }; // 比较复杂，最后在做
+      break;
+    case "el-image":
+      settings = { disabled: true };
       break;
     case "el-rate":
       settings = {
@@ -615,11 +619,26 @@ function getDefauleVal(item) {
       return "";
   }
 } //根据不同的表单元素进行判断并返回默认值
-function getDefaultRule(item, val) {
-  if (!item.isRequire) {
-    return [];
+function formValid(item, rule, value, callback) {
+  if (item.key === "TYYW_GG_AJJBXX--ZHXGSJ") {
+    this.formDedigner.activeFormData.mainActiveFormItemList.forEach(i => {
+      if (i.key === "TYYW_GG_AJJBXX--SFGZAJ") {
+        i.settings.disabled = !value;
+        if (!value) {
+          this.formDedigner.$refs.mainpain.formModel["TYYW_GG_AJJBXX--SFGZAJ"] =
+            "";
+        }
+      }
+    });
   }
-  let tempRule = [];
+  callback();
+}
+function getDefaultRule(item, val) {
+  let tempRule = [{ validator: formValid.bind(this, item), trigger: "change" }];
+  if (!item.isRequire) {
+    return tempRule;
+  }
+
   let valType = typeof val;
   let temptype = null;
   let temptrigger = "blur";
@@ -662,14 +681,14 @@ function getDefaultRule(item, val) {
   } else {
     tempmsg = item.key;
   }
-  if (item.dataType.value === "email") temptype = "email";
-  if (item.dataType.value === "url") temptype = "url";
-  if (item.dataType.value === "password") {
+  if (item.dataType && item.dataType.value === "email") temptype = "email";
+  if (item.dataType && item.dataType.value === "url") temptype = "url";
+  if (item.dataType && item.dataType.value === "password") {
     item.settings.max = 18;
     item.settings.min = 6;
     errorDesc = "应以字母开头，请使用字母数字下划线";
   }
-  if (item.dataType.value === "hardPassword") {
+  if (item.dataType && item.dataType.value === "hardPassword") {
     item.settings.max = 10;
     item.settings.min = 8;
     errorDesc = "应为大小写字母和数字的组合，不能使用特殊字符";
@@ -696,7 +715,8 @@ function getDefaultRule(item, val) {
       trigger: temptrigger
     });
   }
-  let regex = this.formItemSettingsValue.RegexList[item.dataType.value];
+  let regex =
+    item.dataType && this.formItemSettingsValue.RegexList[item.dataType.value];
   if (regex) {
     tempRule.push({
       pattern: regex,
@@ -807,20 +827,24 @@ function isSettingVisible(setting, val) {
     (this.$store.state.formDesigner.allSettting || userableSetting[val])
   );
 } //此方法用于返回相对应的设置项是否展示出来给用户进行设置
-function translateFormItem(item) {
-  let tempItem = {};
-  tempItem.key = item.zdywmc;
-  tempItem.label = item.zdzwmc || "";
-  tempItem.span = 24 / this.$store.state.formDesigner.layout;
-  // tempItem.component = "el-select";
-  tempItem.component = item.sjlx;
-  tempItem.offset = 0;
-  let textW = tempItem.label.replace(/[\u4e00-\u9fa5]/g, "aa").length * 8 + 12;
-  tempItem.labelWidth = textW === 12 ? 0 : Math.min(Math.max(textW, 120), 180);
+function translateFormItem(item, index, maxWidth) {
+  let tempItem = {
+    key: item.zdywmc,
+    label: item.zdzwmc || "",
+    span: 24 / this.$store.state.formDesigner.layout,
+    component: item.sjlx || "el-select",
+    offset: 0,
+    labelWidth: "",
+    settings: {}
+  };
+  // let textW = tempItem.label.replace(/[\u4e00-\u9fa5]/g, "aa").length * 8 + 12;
+  // tempItem.labelWidth = textW === 12 ? 0 : Math.min(Math.max(textW, 120), 180);
+  tempItem.labelWidth = maxWidth;
   tempItem.settings = getSettings(tempItem);
-  // tempItem.settings.disabled = !item.sfjh;
   tempItem.settings.disabled = false;
-  tempItem.settings.placeholder = item.mrz;
+  tempItem.isRequire = false;
+  // tempItem.settings.placeholder = item.mrz;
+  tempItem.val = item.mrz;
   if (item.sjygl) {
     tempItem.settings.remote = true;
     tempItem.settings.remoteUrl = "/getSJYByProcedure?P_LBBM=" + item.sjygl;

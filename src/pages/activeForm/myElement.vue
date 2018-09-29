@@ -28,7 +28,7 @@
           <el-option v-for="item in innerdata.settings['select-data']" :key="item.label"    :label="item.mc" :value="item.mc+'---'+item.dm"></el-option>
         </el-select>
         <el-cascader v-else-if="innerdata.component==='el-cascader'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings"  :options="innerdata.settings['cascader-data']||[]"></el-cascader>
-        <el-upload ref="upload" v-else-if="innerdata.component==='el-upload'" v-bind="innerdata.settings"  :action="innerdata.settings.uploadUrl ||'http://'"   :file-list="fileList"
+        <el-upload style="height: 30px;" ref="upload" v-else-if="innerdata.component==='el-upload'" v-bind="innerdata.settings"  :action="innerdata.settings.uploadUrl ||'http://'"   :file-list="fileList"
                    :on-preview="handlePreview"
                    :on-remove="handleRemove"
                    :before-remove="beforeRemove"
@@ -40,9 +40,12 @@
                    :before-upload="beforeUpload"
         >
           <el-button slot="trigger" :size="innerdata.settings.size" :plain="innerdata.settings.plain" :round="innerdata.settings.round" :circle="innerdata.settings.circle" :icon="innerdata.settings.icon" :type="innerdata.settings.buttonType" >点击上传</el-button>
-          <el-button v-if="!innerdata.settings['auto-upload']"  @click="$refs.upload.submit()" :size="innerdata.settings.size" :plain="innerdata.settings.plain" :round="innerdata.settings.round" :circle="innerdata.settings.circle" :icon="innerdata.settings.icon" :type="innerdata.settings.buttonType" >手动上传</el-button>
+          <!--<el-button v-if="!innerdata.settings['auto-upload']"  @click="$refs.upload.submit()" :size="innerdata.settings.size" :plain="innerdata.settings.plain" :round="innerdata.settings.round" :circle="innerdata.settings.circle" :icon="innerdata.settings.icon" :type="innerdata.settings.buttonType" >手动上传</el-button>-->
           <div slot="tip" class="el-upload__tip" v-if="innerdata.settings.uploadtip">{{innerdata.settings.uploadtip}}</div>
+          <span class="upload-tip">{{uploadFileName}}</span>
         </el-upload>
+        <userimg v-else-if="innerdata.component==='el-image'" :src="formModel[innerdata.key]" @choosedimg="imageChoosed"  v-bind="innerdata.settings"></userimg>
+
         <el-table v-else-if="innerdata.component==='el-table'" :data="innerdata.settings['table-data']||[]" v-bind="innerdata.settings">
           <el-table-column v-for="item in innerdata.settings.tableColumns" v-bind="item" :key="item.label"></el-table-column>
         </el-table>
@@ -56,7 +59,7 @@ export default {
     innerdata: { type: Object }
   },
   data() {
-    return { fileList: [] };
+    return { fileList: [], uploadFileName: "" };
   },
   methods: {
     getRemoteData() {
@@ -95,12 +98,13 @@ export default {
         }
       );
     },
+    //  el-upload的方法
     handlePreview(file, fileList) {
       console.log("handlePreview", file, fileList);
-      this.$notify.info({
+      /*this.$notify.info({
         title: this.innerdata.component,
         message: "handlePreview"
-      });
+      });*/
     },
     handleRemove(file, fileList) {
       this.fileList.forEach((item, index) => {
@@ -110,10 +114,10 @@ export default {
         console.log(fileList);
         console.log("handleRemove", this.fileList);
       });
-      this.$notify.info({
+      /*  this.$notify.info({
         title: this.innerdata.component,
         message: "handleRemove"
-      });
+      });*/
     },
     beforeRemove(file, fileList) {
       console.log(file, fileList);
@@ -128,10 +132,10 @@ export default {
     },
     handleSuccess(response, file, fileList) {
       console.log("handleSuccess", response, file, fileList);
-      this.$notify.success({
+      /*  this.$notify.success({
         title: this.innerdata.component,
         message: "handleSuccess"
-      });
+      });*/
     },
     uploadProgress(event, file, fileList) {
       console.log("uploadProgress", event, file, fileList);
@@ -153,13 +157,38 @@ export default {
     },
     beforeUpload(file, fileList) {
       console.log("beforeUpload", file, fileList);
-      return !this.innerdata.settings.selfhandleFile;
+      this.formModel[this.innerdata.key] = file;
+      this.uploadFileName = file.name;
+      // return !this.innerdata.settings.selfhandleFile;
+      return false;
+    },
+    //头像的方法
+    imageChoosed(file) {
+      this.formModel[this.innerdata.key] = file;
+    }
+  },
+  components: {
+    userimg: () => import("./components/userimg.vue")
+  },
+  computed: {
+    edit: {
+      get() {
+        return this.$store.state.formDesigner.edit;
+      }
     }
   },
   mounted() {
+    if (this.edit) return;
     if (this.innerdata.settings.remote) {
       this.getRemoteData();
     }
   }
 };
 </script>
+<style>
+.upload-tip {
+  display: block;
+  color: #cccccc;
+  font-size: 12px;
+}
+</style>

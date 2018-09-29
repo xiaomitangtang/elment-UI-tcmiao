@@ -1,9 +1,15 @@
 <template>
-    <div class='anka-form'>
-        <div class="anka-form-part" v-for="(form,index) in anka?anka.CaseCardTemplete.TabsList:[]" :key="'form'+index">
-            <div class="form-list-title">{{form.TabsName}}</div>
-            <ul class="form-list-ul">
-                <li class="form-list-item" :class="{'anka-form-active':activeItem===item}" @click="formClick(item)" v-for="(item,index2) in form.TableList" :key="'item'+index+index2">{{item.TableName}}</li>
+    <div class='anka-form'  >
+        <div class="anka-form-part" v-for="(tab,index) in anka?anka.CaseCardTemplete.TabsList:[]" :key="'form'+index">
+            <div class="form-list-title" @drop="dropedOnTitle(tab,index)" @dragover.prevent.stop>{{tab.TabsName}}</div>
+            <ul class="form-list-ul" >
+                <li class="form-list-item" :class="{'anka-form-active':currenTable===form}"
+                    @click="formClick(form)" v-for="(form,index2) in tab.TableList"
+                    :key="'form'+index+index2"
+                    draggable="true"
+                    @dragstart="dragStart(tab,form,index,index2)"
+                    @drop="dropedOnItem(tab,form,index,index2)" @dragover.prevent.stop
+                >{{form.TableName}}</li>
             </ul>
         </div>
     </div>
@@ -11,11 +17,11 @@
 <script>
 export default {
   props: {
-    anka: { type: Object }
+    anka: { type: Object },
+    currenTable: { type: Object }
   },
   data() {
     return {
-      activeItem: null,
       forms: [
         {
           title: "受理情况",
@@ -34,13 +40,21 @@ export default {
   },
   methods: {
     formClick(item) {
-      this.activeItem = item;
       this.$emit("ankaTableClick", item);
-    }
-  },
-  watch: {
-    anka(n) {
-      this.activeItem = n ? n.CaseCardTemplete.TabsList[0].TableList[0] : null;
+    },
+    dragStart(tab, item, index, index2) {
+      this.$emit("dragItem", { tab, item, tabIndex: index, itemIndex: index2 });
+    },
+    dropedOnTitle(tab, index) {
+      this.$emit("dropedOnTitle", { tab, tabIndex: index });
+    },
+    dropedOnItem(tab, item, index, index2) {
+      this.$emit("dropedOnItem", {
+        tab,
+        item,
+        tabIndex: index,
+        itemIndex: index2
+      });
     }
   }
 };

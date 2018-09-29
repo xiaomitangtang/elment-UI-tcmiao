@@ -1,39 +1,69 @@
 <template>
   <div class='form-designer-main' @drop.stop.prevent @dragover.prevent>
-    <el-row class="form-designer-main-header">
-      <span class="form-designer-main-header-text">{{data?data.TableName:"表单"}}</span>
-      <!--<el-col :span="24" style="text-align: right">
-        <el-select size="mini" v-if="edit" v-model="layout" style="margin-right: 10px;">
-          <el-option v-for="item in formItemSettingsValue.layoutList" :label="item.text" :value="item.val"
-                     :key="item.val"></el-option>
-        </el-select>
-        &lt;!&ndash;<el-switch v-if="edit" v-model="openLayout" style="margin-right: 20px;" active-text="限制" inactive-text="不限制"></el-switch>&ndash;&gt;
-        <el-checkbox v-if="edit" v-model="openLayout">限制</el-checkbox>
-        <el-checkbox v-if="edit" v-model="showallSetting" style="margin-right: 20px;">全配置</el-checkbox>
-        <el-button size="mini" v-if="edit" @click="addpane">添加/修改pane</el-button>
-        <el-button size="mini" v-if="edit&&showtaps" @click="delpane">删除pane</el-button>
-        <el-button size="mini" type="primary" @click="changemodel">{{editVal}}</el-button>
-        <el-button size="mini" @click="mysubmit">查看/保存</el-button>
-      </el-col>-->
-      <el-button style=" float: right;" @click="mysubmit" size="mini">查看/保存</el-button>
-    </el-row>
-      <el-row class="form-designer-pane">
-        <formDesignerpane ref="formDesignerMain" class="form-designer-pain-main"  :formItemList="activeFormData.mainActiveFormItemList"
-                          :style="designerStyleObj.mainformheight" @formDesignerpaneItemClick="formDesignerpaneItemClick" @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
-        ></formDesignerpane>
-     <el-row :style="designerStyleObj.paneheight">
-       <el-tabs v-if="showtaps&&activeFormData.tabs.length" class="form-tabs"  type="card"     v-model="nowformPaneName"
-                :editable="edit" @edit="formDesignerTabEdit" >
-         <el-tab-pane v-for="item in activeFormData.tabs" :label="item.name" :name="item.name" :key="item.name">
-           <formDesignerpane ref="formDesignerPane" @formDesignerpaneItemClick="formDesignerpaneItemClick"
-                             :formItemList="item.activeFormItemList" @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
-           ></formDesignerpane>
-         </el-tab-pane>
-       </el-tabs>
-     </el-row>
 
-    </el-row>
 
+
+    <div class="form-desgner-tables" ref="tablebox" @scroll="tableBoxScroll">
+      <div  v-for="(table , index) in tablelistData" ref="table" :key="'ankatable'+index">
+        <el-row class="form-designer-main-header">
+          <span class="form-designer-main-header-text">{{data?data[index].TableName:"表单"}}</span>
+        </el-row>
+        <el-row class="form-designer-pane" >
+          <formDesignerpane  class="form-designer-pain-main"
+                             ref="mainpain"
+                             :panelName="data[index].TableName"
+                             :formItemList="table"
+                             @formDesignerpaneItemClick="formDesignerpaneItemClick"
+                             @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
+                             @PanelMounted="PanelMounted" @PanelDestory="PanelDestory"
+          ></formDesignerpane>
+          <!--     <el-row :style="designerStyleObj.paneheight">
+                 <el-tabs v-if="showtaps&&activeFormData.tabs.length" class="form-tabs"  type="card"     v-model="nowformPaneName"
+                          :editable="edit" @edit="formDesignerTabEdit" >
+                   <el-tab-pane v-for="item in activeFormData.tabs" :label="item.name" :name="item.name" :key="item.name">
+                     <formDesignerpane @formDesignerpaneItemClick="formDesignerpaneItemClick"
+                                       :formItemList="item.activeFormItemList"
+                                       @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
+                                       @PanelMounted="PanelMounted" @PanelDestory="PanelDestory"
+                     ></formDesignerpane>
+                   </el-tab-pane>
+                 </el-tabs>
+               </el-row>-->
+        </el-row>
+      </div>
+    </div>
+
+
+
+
+
+    <div class="form-designer-setting">
+      <!--      <el-col :span="24" style="text-align: right">
+               <el-select size="mini" v-if="edit" v-model="layout" style="margin-right: 10px;">
+                 <el-option v-for="item in formItemSettingsValue.layoutList" :label="item.text" :value="item.val"
+                            :key="item.val"></el-option>
+               </el-select>
+               &lt;!&ndash;<el-switch v-if="edit" v-model="openLayout" style="margin-right: 20px;" active-text="限制" inactive-text="不限制"></el-switch>&ndash;&gt;
+               <el-checkbox v-if="edit" v-model="openLayout">限制</el-checkbox>
+               <el-checkbox v-if="edit" v-model="showallSetting" style="margin-right: 20px;">全配置</el-checkbox>
+               <el-button size="mini" v-if="edit" @click="addpane">添加/修改pane</el-button>
+               <el-button size="mini" v-if="edit&&showtaps" @click="delpane">删除pane</el-button>
+               <el-button size="mini" type="primary" @click="changemodel">{{editVal}}</el-button>
+               <el-button size="mini" @click="mysubmit">查看/保存</el-button>
+             </el-col>-->
+      <el-button-group  style=" float: right;" >
+        <el-button   size="mini" v-if="edit" @click="addpane">添加/修改pane</el-button>
+        <el-button  size="mini" v-if="edit&&showtaps" @click="delpane">删除pane</el-button>
+        <el-button size="mini" @click="changemodel">{{editVal}}</el-button>
+        <el-button size="mini" @click="mysubmit" >查看/保存</el-button>
+      </el-button-group>
+      <el-checkbox  style=" float: right;margin-right: 10px;" v-if="edit" v-model="openLayout">限制</el-checkbox>
+      <el-checkbox  style=" float: right;margin-right: 10px;"  v-if="edit" v-model="showallSetting">全配置</el-checkbox>
+      <el-select size="mini" v-if="edit" v-model="layout" style="float: right;">
+        <el-option v-for="item in formItemSettingsValue.layoutList" :label="item.text" :value="item.val"
+                   :key="item.val"></el-option>
+      </el-select>
+    </div>
     <el-dialog class="designer-dialog" title="表单设置" :visible.sync="dialogFormVisible" width="1200px">
       <el-form :inline="true" label-width="120px">
         <el-row> <!--输入框-->
@@ -592,31 +622,35 @@
 </template>
 <script>
 import formDesignerStatic from "./formDesignerStatic";
+
 export default {
   name: "formDesigner",
   props: {
-    data: { type: Object }
+    data: { type: Array },
+    currenTable: { type: Object }
   },
   data() {
     return {
       showtaps: false,
-      activeFormData: {
+      /*      activeFormData: {
         mainActiveFormItemList: [],
         tabs: [
           // {name: 'first', activeFormItemList: []}
         ]
-      },
+      },*/
       nowformPaneName: "first",
       designerStyleObj: {
         paneheight: {},
         mainformheight: {}
       },
-      formModalData: { settings: {} },
+      formModalData: { settings: {}, isRequire: false },
       formItemSettingsValue: formDesignerStatic.formItemSettingsValue,
       nowFormPane: null,
       nowFormPaneDragItem: null,
       dropToIndex: -1,
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      tablelistData: [],
+      panels: []
     };
   },
   provide() {
@@ -727,11 +761,7 @@ export default {
       this.nowFormPaneDragItem = dragItem;
     },
     getAllPanes() {
-      let pans = [this.$refs.formDesignerMain];
-      if (this.$refs.formDesignerPane) {
-        pans = pans.concat(this.$refs.formDesignerPane);
-      }
-      return pans;
+      return this.panels;
     },
     mysubmit() {
       let formValid = this.getAllPanes()
@@ -747,7 +777,10 @@ export default {
         this.getAllPanes().forEach(i => {
           temp = temp.concat(
             Object.keys(i.formModel).map(j => {
-              if (typeof i.formModel[j].getTime === "function") {
+              if (
+                i.formModel[j] &&
+                typeof i.formModel[j].getTime === "function"
+              ) {
                 return {
                   field: j,
                   value: "TypeIsDate=" + i.formModel[j].getTime()
@@ -758,6 +791,14 @@ export default {
             })
           );
         });
+        console.log(temp);
+        if (this.hasFile) {
+          let formdata = new FormData();
+          temp.forEach(filed => {
+            formdata.append(filed.field, filed.value);
+          });
+          temp = formdata;
+        }
         this.$api.activeForm.saveAnKa(temp).then(
           res => {
             console.log(res);
@@ -775,10 +816,61 @@ export default {
       }
       this.getAllPanes().forEach(item => item.changemodel());
     },
-    initForm() {
-      this.activeFormData.mainActiveFormItemList = this.data.TableItems.map(i =>
-        this.translateFormItem(i)
+    getAllTableItem() {
+      return this.tablelistData.flat();
+    },
+    initTable(table) {
+      let simgle = [];
+      let double = [];
+      table.TableItems.forEach((item, index) => {
+        if (index % 2 === 0) {
+          simgle.push(
+            item.zdzwmc.replace(/[\u4e00-\u9fa5]/g, "aa").length * 8 + 12
+          );
+        } else {
+          double.push(
+            item.zdzwmc.replace(/[\u4e00-\u9fa5]/g, "aa").length * 8 + 20
+          );
+        }
+      });
+      let maxSingle = Math.max(...simgle) < 200 ? Math.max(...simgle) : 200;
+      let maxDouble = Math.max(...double) < 200 ? Math.max(...double) : 200;
+      return table.TableItems.map((item, index) =>
+        this.translateFormItem(
+          item,
+          index,
+          index % 2 === 0 ? maxSingle : maxDouble
+        )
       );
+    },
+    initForm() {
+      this.tablelistData = this.data.map(i => this.initTable(i));
+      this.$nextTick(() => {
+        this.getAllPanes().forEach(item => item.changemodel());
+        setTimeout(() => {
+          this.tablelistScrollList = this.$refs.table.map(i => i.offsetTop);
+        }, 1000);
+      });
+    },
+    PanelMounted(panel) {
+      if (panel) {
+        this.panels.push(panel);
+        // console.log("PanelMounted----panels", this.panels);
+      }
+    },
+    PanelDestory(panel) {
+      if (panel) {
+        this.panels.splice(this.panels.indexOf(panel), 1);
+      }
+    },
+    tableBoxScroll(e) {
+      let scrollTop = e.target.scrollTop;
+      let near = this.tablelistScrollList.map(i => Math.abs(i - scrollTop));
+      let min = Math.min(...near);
+      if (min < 100 && !this.scrollTimer) {
+        console.log("emit");
+        this.$emit("currentTableChange", this.data[near.indexOf(min)]);
+      }
     }
   },
   components: {
@@ -792,7 +884,7 @@ export default {
       }
     },
     editVal() {
-      return this.edit ? "设计模式" : "用户模式";
+      return this.edit ? "关闭编辑" : "编辑";
     },
     showallSetting: {
       get() {
@@ -807,6 +899,9 @@ export default {
         return this.$store.state.formDesigner.layout;
       },
       set(val) {
+        this.getAllTableItem().forEach(i => {
+          console.log((i.settings.handleWidth = ""));
+        });
         this.$store.commit("formDesigner/setLayout", val);
       }
     },
@@ -817,17 +912,42 @@ export default {
       set(val) {
         this.$store.commit("formDesigner/setOpenLayout", val);
       }
+    },
+    hasFile() {
+      return this.getAllTableItem().some(i => {
+        return ["el-upload", "el-image"].indexOf(i.component) > -1;
+      });
     }
   },
   watch: {
     data() {
       this.initForm();
+    },
+    currenTable(n) {
+      if (!this.tablelistScrollList) return;
+      let target = this.tablelistScrollList[this.data.indexOf(n)];
+      let last = this.$refs.tablebox.scrollTop;
+      this.scrollTimer = setInterval(() => {
+        this.$refs.tablebox.scrollTop = last + (target - last) / 10;
+        last = this.$refs.tablebox.scrollTop;
+
+        if (Math.abs(target - last) < 100) {
+          clearInterval(this.scrollTimer);
+          this.scrollTimer = null;
+        }
+      }, 30);
     }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.initForm();
+    }, 100);
   }
 };
 </script>
 <style lang="less">
 .form-designer-main {
+  position: relative;
   height: 100%;
   padding-right: 10px;
   overflow: auto;
@@ -847,6 +967,17 @@ export default {
       color: #134b89;
     }
   }
+  .form-desgner-tables {
+    height: calc(100% - 30px);
+    overflow: auto;
+  }
+  .form-designer-setting {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    width: 100%;
+    height: 30px;
+  }
 }
 
 .form-designer-pane {
@@ -857,7 +988,7 @@ export default {
   border-radius: 10px;
   .form-designer-pain-main {
     width: 100%;
-    overflow: auto;
+    /*overflow: hidden;*/
   }
   .myform-el-row {
     padding: 0 10px;
@@ -927,24 +1058,26 @@ export default {
   color: #ccc;
 }
 .editItem {
-  border: 1px solid #efefef;
-  border-radius: 5px;
+  /*border: 1px solid #efefef;*/
+  /*border-radius: 5px;*/
+  /*background-color: #cccccc;*/
 }
-/* .resizeBar{
-    position: absolute;
-    right: -25px;
-    top: 50%;
-    z-index: 2;
-    margin-top: -20px;
-    height: 56px;
-    width: 50px;
-    background-color: red;
-    opacity: 0;
-    cursor: col-resize;
-  }*/
+.resizeBar {
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  z-index: 2;
+  margin-top: -20px;
+  height: 56px;
+  width: 50px;
+  background-color: red;
+  opacity: 0;
+  cursor: col-resize;
+}
 .my-element {
   position: relative;
   padding: 5px 10px 0 10px !important;
+  min-height: 64px;
   overflow: hidden;
   .el-checkbox,
   .el-radio {
@@ -1022,7 +1155,9 @@ export default {
   .el-form-item__content {
   }
   .el-form-item__label {
+    max-height: 40px;
     margin-bottom: 0;
+    line-height: 20px;
   }
   .changeWidthbtns,
   .close-item {

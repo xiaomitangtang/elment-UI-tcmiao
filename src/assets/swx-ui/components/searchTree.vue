@@ -4,7 +4,7 @@
                   :readOnly="readOnly"
                   class="swx-input swx-input-mini" @click.native.stop="showtree=true" :clearable="true" @clear="clear" v-bind="inputBind"></el-input>
         <transition name="searchTreeFade">
-            <div class="swx-search-tree-treebox" v-if="showtree">
+            <div class="swx-search-tree-treebox"  v-if="showtree" @click.stop>
                 <el-tree
                         ref="searchtree"
                         class="swx-tree-arrow-style-two  swx-checkbox"
@@ -17,6 +17,7 @@
                         :option="treeOptions"
                 >
                 </el-tree>
+                <!--<div class="resizeBar"  @mousedown.stop="openResize" @mouseup.stop="closeResize"></div>-->
             </div>
         </transition>
     </div>
@@ -55,13 +56,18 @@ export default {
   },
   data() {
     return {
-      resetFunc: "",
       showtree: false,
       inputText: "",
       filterText: ""
     };
   },
   methods: {
+    /*  openResize(e) {
+      console.log("openResize", e);
+    },
+    closeResize(e) {
+      console.log("closeResize", e);
+    },*/
     clear() {
       this.inputText = "";
       this.filterText = "";
@@ -121,6 +127,15 @@ export default {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     background-color: #fff;
     overflow: auto;
+  }
+  .resizeBar {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(204, 182, 70, 0.8);
+    cursor: nwse-resize;
   }
 }
 .searchTreeFade-enter-active,
