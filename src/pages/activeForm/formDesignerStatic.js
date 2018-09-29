@@ -621,13 +621,14 @@ function getDefauleVal(item) {
 } //根据不同的表单元素进行判断并返回默认值
 function formValid(item, rule, value, callback) {
   if (item.key === "TYYW_GG_AJJBXX--ZHXGSJ") {
-    this.formDedigner.activeFormData.mainActiveFormItemList.forEach(i => {
+    window._.flatten(this.formDedigner.tablelistData).forEach(i => {
       if (i.key === "TYYW_GG_AJJBXX--SFGZAJ") {
         i.settings.disabled = !value;
-        if (!value) {
-          this.formDedigner.$refs.mainpain.formModel["TYYW_GG_AJJBXX--SFGZAJ"] =
-            "";
-        }
+      }
+    });
+    this.formDedigner.panels.forEach(panel => {
+      if (panel.formModel["TYYW_GG_AJJBXX--SFGZAJ"]) {
+        panel.formModel["TYYW_GG_AJJBXX--SFGZAJ"] = "";
       }
     });
   }

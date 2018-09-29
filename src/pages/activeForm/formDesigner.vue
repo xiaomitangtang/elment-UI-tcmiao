@@ -1,9 +1,7 @@
 <template>
   <div class='form-designer-main' @drop.stop.prevent @dragover.prevent>
 
-
-
-    <div class="form-desgner-tables" ref="tablebox" @scroll="tableBoxScroll">
+    <div class="form-desgner-tables" ref="tablebox" id="tablebox" @scroll.passive="tableBoxScroll">
       <div  v-for="(table , index) in tablelistData" ref="table" :key="'ankatable'+index">
         <el-row class="form-designer-main-header">
           <span class="form-designer-main-header-text">{{data?data[index].TableName:"表单"}}</span>
@@ -650,7 +648,8 @@ export default {
       dropToIndex: -1,
       dialogFormVisible: false,
       tablelistData: [],
-      panels: []
+      panels: [],
+      scrollTimer: null
     };
   },
   provide() {
@@ -777,17 +776,10 @@ export default {
         this.getAllPanes().forEach(i => {
           temp = temp.concat(
             Object.keys(i.formModel).map(j => {
-              if (
-                i.formModel[j] &&
-                typeof i.formModel[j].getTime === "function"
-              ) {
-                return {
-                  field: j,
-                  value: "TypeIsDate=" + i.formModel[j].getTime()
-                };
-              } else {
-                return { field: j, value: i.formModel[j] };
-              }
+              let value = window._.isDate(i.formModel[j])
+                ? "TypeIsDate=" + i.formModel[j].getTime()
+                : i.formModel[j];
+              return { field: j, value: value };
             })
           );
         });
@@ -817,7 +809,7 @@ export default {
       this.getAllPanes().forEach(item => item.changemodel());
     },
     getAllTableItem() {
-      return this.tablelistData.flat();
+      return window._.flatten(this.tablelistData);
     },
     initTable(table) {
       let simgle = [];
@@ -847,9 +839,9 @@ export default {
       this.tablelistData = this.data.map(i => this.initTable(i));
       this.$nextTick(() => {
         this.getAllPanes().forEach(item => item.changemodel());
-        setTimeout(() => {
+        this.$nextTick(() => {
           this.tablelistScrollList = this.$refs.table.map(i => i.offsetTop);
-        }, 1000);
+        });
       });
     },
     PanelMounted(panel) {
@@ -864,11 +856,11 @@ export default {
       }
     },
     tableBoxScroll(e) {
+      if (this.changing) return;
       let scrollTop = e.target.scrollTop;
       let near = this.tablelistScrollList.map(i => Math.abs(i - scrollTop));
       let min = Math.min(...near);
-      if (min < 100 && !this.scrollTimer) {
-        console.log("emit");
+      if (min < 100) {
         this.$emit("currentTableChange", this.data[near.indexOf(min)]);
       }
     }
@@ -925,23 +917,31 @@ export default {
     },
     currenTable(n) {
       if (!this.tablelistScrollList) return;
+      this.changing = true;
+      clearInterval(this.scrollTimer);
       let target = this.tablelistScrollList[this.data.indexOf(n)];
-      let last = this.$refs.tablebox.scrollTop;
+      let tablebox = document.getElementById("tablebox");
+      let last = tablebox.scrollTop;
+      let step = 10;
       this.scrollTimer = setInterval(() => {
-        this.$refs.tablebox.scrollTop = last + (target - last) / 10;
-        last = this.$refs.tablebox.scrollTop;
-
-        if (Math.abs(target - last) < 100) {
+        tablebox.scrollTop = last + (target - last) / step;
+        last = tablebox.scrollTop;
+        if (Math.abs(target - last) < 3) {
           clearInterval(this.scrollTimer);
-          this.scrollTimer = null;
+          tablebox.scrollTop = target;
+          this.changing = false;
+        } else if (Math.abs(target - last) < 10) {
+          step = 2;
+        } else if (Math.abs(target - last) < 30) {
+          step = 3;
+        } else if (Math.abs(target - last) < 100) {
+          step = 5;
         }
-      }, 30);
+      }, 20);
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.initForm();
-    }, 100);
+    this.initForm();
   }
 };
 </script>

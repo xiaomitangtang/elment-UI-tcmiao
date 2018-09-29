@@ -1,12 +1,17 @@
 <template>
     <div class='anka-form'  >
         <div class="anka-form-part" v-for="(tab,index) in anka?anka.CaseCardTemplete.TabsList:[]" :key="'form'+index">
-            <div class="form-list-title" @drop="dropedOnTitle(tab,index)" @dragover.prevent.stop>{{tab.TabsName}}</div>
+            <div class="form-list-title"
+                 @drop="dropedOnTitle(tab,index)"
+                 @dragover.prevent.stop
+                 @dblclick="titleDbClick(tab)"
+            >{{tab.TabsName}}</div>
             <ul class="form-list-ul" >
                 <li class="form-list-item" :class="{'anka-form-active':currenTable===form}"
                     @click="formClick(form)" v-for="(form,index2) in tab.TableList"
                     :key="'form'+index+index2"
                     draggable="true"
+                    @dblclick="itemDbClick(form)"
                     @dragstart="dragStart(tab,form,index,index2)"
                     @drop="dropedOnItem(tab,form,index,index2)" @dragover.prevent.stop
                 >{{form.TableName}}</li>
@@ -55,6 +60,12 @@ export default {
         tabIndex: index,
         itemIndex: index2
       });
+    },
+    titleDbClick(tab) {
+      this.$emit("editName", { type: "tab", tab: tab });
+    },
+    itemDbClick(form) {
+      this.$emit("editName", { type: "table", table: form });
     }
   }
 };

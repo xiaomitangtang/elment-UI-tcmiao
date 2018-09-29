@@ -16,6 +16,9 @@ import "element-ui/lib/theme-chalk/index.css";
 import "@/assets/swx-ui/less/index.less";
 import swxUi from "@/assets/swx-ui/index.js";
 import VueClipboard from "vue-clipboard2";
+import _ from "lodash";
+
+window._ = _;
 Vue.use(ElementUI, { size: "mini" });
 Vue.use(swxUi);
 Vue.use(VueClipboard);

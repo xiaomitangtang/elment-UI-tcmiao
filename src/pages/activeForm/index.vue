@@ -12,6 +12,7 @@
                     @dragItem="ankaFormListDragItem"
                     @dropedOnTitle="ankaFormListDropedOnTitle"
                     @dropedOnItem="ankaFormListDropedOnItem"
+                              @editName="editName"
                 ></ankaformList>
             </div>
             <div class=" fullhight active-form-page-body-anka-main-body-form">
@@ -472,7 +473,6 @@ export default {
       console.log(this.currentAnka);
     },
     ankaTableClick(data) {
-      console.log(data);
       this.currenShowTable = data;
     },
     ankaFormListDragItem(data) {
@@ -487,21 +487,51 @@ export default {
     },
     ankaFormListDropedOnTitle({ tab }) {
       tab.TableList.push(this.getOrignItem());
+      this.tableList = this.getAllTable(
+        this.currentAnka.CaseCardTemplete.TabsList,
+        false
+      );
     },
     ankaFormListDropedOnItem({ tab, itemIndex }) {
       tab.TableList.splice(itemIndex, 0, this.getOrignItem());
+      this.tableList = this.getAllTable(
+        this.currentAnka.CaseCardTemplete.TabsList,
+        false
+      );
     },
-    getAllTable(TabsList = []) {
-      let alltable = TabsList.map(i => i.TableList).flat();
-      this.currenShowTable = alltable[0];
+    getAllTable(TabsList = [], init) {
+      let alltable = window._.flatten(TabsList.map(i => i.TableList));
+      if (init) {
+        this.currenShowTable = alltable[0];
+      }
       return alltable;
+    },
+    editName(data) {
+      let oldname =
+        data.type === "tab" ? data.tab.TabsName : data.table.TableName;
+      let title = data.type === "tab" ? "修改tab名" : "修改表名";
+      this.$prompt("", { title: title, inputValue: oldname }).then(
+        res => {
+          if (res.action === "confirm") {
+            if (data.type === "tab") {
+              data.tab.TabsName = res.value;
+            } else {
+              data.table.TableName = res.value;
+            }
+          }
+        },
+        err => {
+          console.log(err);
+        }
+      );
     }
   },
   mounted() {
     this.currentAnka = this.ankaData[0];
     this.tableList = this.currentAnka.CaseCardTemplete.TabsList[0].TableList;
     this.tableList = this.getAllTable(
-      this.currentAnka.CaseCardTemplete.TabsList
+      this.currentAnka.CaseCardTemplete.TabsList,
+      true
     );
     this.$api.activeForm
       .demoData({ params: { akmbbh: "100000231" } })
@@ -509,7 +539,8 @@ export default {
         this.ankaData = data.data;
         this.currentAnka = this.ankaData[0];
         this.tableList = this.getAllTable(
-          this.currentAnka.CaseCardTemplete.TabsList
+          this.currentAnka.CaseCardTemplete.TabsList,
+          true
         );
       });
   },

@@ -235,7 +235,6 @@ export default {
       this.dropToIndex = this.formItemList.length - 1;
     },
     changemodel() {
-      console.log("changemodel");
       let tempmodel = {};
       let temprule = {};
       this.showformItem = false;
@@ -243,9 +242,9 @@ export default {
         tempmodel[item.key] = this.getDefauleVal(item);
         temprule[item.key] = this.getDefaultRule(item, tempmodel[item.key]);
       });
+      this.formModel = tempmodel;
+      this.formRule = temprule;
       this.$nextTick(() => {
-        this.formModel = tempmodel;
-        this.formRule = temprule;
         this.showformItem = true;
       });
     }
