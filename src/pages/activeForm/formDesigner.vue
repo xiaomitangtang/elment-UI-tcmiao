@@ -1,7 +1,9 @@
 <template>
   <div class='form-designer-main' @drop.stop.prevent @dragover.prevent>
 
-    <div class="form-desgner-tables" ref="tablebox" id="tablebox" @scroll.passive="tableBoxScroll">
+    <div class="form-desgner-tables" ref="tablebox" id="tablebox" @scroll.passive="tableBoxScroll"
+        @mousewheel="tableMouseWheel"
+    >
       <div  v-for="(table , index) in tablelistData" ref="table" :key="'ankatable'+index">
         <el-row class="form-designer-main-header">
           <span class="form-designer-main-header-text">{{data?data[index].TableName:"表单"}}</span>
@@ -869,6 +871,11 @@ export default {
       if (min < 100) {
         this.$emit("currentTableChange", this.data[near.indexOf(min)]);
       }
+    },
+    tableMouseWheel() {
+      if (!this.changing) return;
+      clearInterval(this.scrollTimer);
+      this.changing = false;
     }
   },
   components: {
