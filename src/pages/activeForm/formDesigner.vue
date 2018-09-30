@@ -14,6 +14,7 @@
                              @formDesignerpaneItemClick="formDesignerpaneItemClick"
                              @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
                              @PanelMounted="PanelMounted" @PanelDestory="PanelDestory"
+                             @panelUpdated="panelUpdated"
           ></formDesignerpane>
           <!--     <el-row :style="designerStyleObj.paneheight">
                  <el-tabs v-if="showtaps&&activeFormData.tabs.length" class="form-tabs"  type="card"     v-model="nowformPaneName"
@@ -50,17 +51,17 @@
                <el-button size="mini" @click="mysubmit">查看/保存</el-button>
              </el-col>-->
       <el-button-group  style=" float: right;" >
-        <el-button   size="mini" v-if="edit" @click="addpane">添加/修改pane</el-button>
-        <el-button  size="mini" v-if="edit&&showtaps" @click="delpane">删除pane</el-button>
+        <!--<el-button   size="mini" v-if="edit" @click="addpane">添加/修改pane</el-button>-->
+        <!--<el-button  size="mini" v-if="edit&&showtaps" @click="delpane">删除pane</el-button>-->
         <el-button size="mini" @click="changemodel">{{editVal}}</el-button>
         <el-button size="mini" @click="mysubmit" >查看/保存</el-button>
       </el-button-group>
-      <el-checkbox  style=" float: right;margin-right: 10px;" v-if="edit" v-model="openLayout">限制</el-checkbox>
       <el-checkbox  style=" float: right;margin-right: 10px;"  v-if="edit" v-model="showallSetting">全配置</el-checkbox>
-      <el-select size="mini" v-if="edit" v-model="layout" style="float: right;">
+        <!--<el-checkbox  style=" float: right;margin-right: 10px;" v-if="edit" v-model="openLayout">限制</el-checkbox>
+        <el-select size="mini" v-if="edit" v-model="layout" style="float: right;">
         <el-option v-for="item in formItemSettingsValue.layoutList" :label="item.text" :value="item.val"
                    :key="item.val"></el-option>
-      </el-select>
+      </el-select>-->
     </div>
     <el-dialog class="designer-dialog" title="表单设置" :visible.sync="dialogFormVisible" width="1200px">
       <el-form :inline="true" label-width="120px">
@@ -662,7 +663,7 @@ export default {
     groupAddItem: formDesignerStatic.groupAddItem,
     groupDelItem: formDesignerStatic.groupDelItem,
     isSettingVisible: formDesignerStatic.isSettingVisible,
-    addpane() {
+    /*    addpane() {
       this.$prompt("请输入tabpane的高度百分比", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -706,8 +707,8 @@ export default {
           this.showtaps = false;
         })
         .catch(() => {});
-    },
-    formDesignerTabEdit(targetName, action) {
+    },*/
+    /*    formDesignerTabEdit(targetName, action) {
       // console.log(targetName, action)
       if (action === "add") {
         this.$prompt("请输入pane名字", "提示", {
@@ -745,7 +746,7 @@ export default {
           this.activeFormData.tabs.splice(tempindex, 1);
         }
       }
-    },
+    },*/
     saveFormStyle() {
       this.nowFormPane.saveFormStyle(this.formModalData);
       this.dialogFormVisible = false;
@@ -811,6 +812,14 @@ export default {
     getAllTableItem() {
       return window._.flatten(this.tablelistData);
     },
+    panelUpdated() {
+      this.setSrollList();
+    },
+    setSrollList() {
+      this.$nextTick(() => {
+        this.tablelistScrollList = this.$refs.table.map(i => i.offsetTop);
+      });
+    },
     initTable(table) {
       let simgle = [];
       let double = [];
@@ -837,17 +846,12 @@ export default {
     },
     initForm() {
       this.tablelistData = this.data.map(i => this.initTable(i));
-      this.$nextTick(() => {
-        this.getAllPanes().forEach(item => item.changemodel());
-        this.$nextTick(() => {
-          this.tablelistScrollList = this.$refs.table.map(i => i.offsetTop);
-        });
-      });
+      this.getAllPanes().forEach(item => item.changemodel());
+      this.setSrollList();
     },
     PanelMounted(panel) {
       if (panel) {
         this.panels.push(panel);
-        // console.log("PanelMounted----panels", this.panels);
       }
     },
     PanelDestory(panel) {
@@ -857,6 +861,8 @@ export default {
     },
     tableBoxScroll(e) {
       if (this.changing) return;
+      this.scrollCount = this.scrollCount ? this.scrollCount + 1 : 1;
+      if (this.scrollCount % 3 !== 0) return;
       let scrollTop = e.target.scrollTop;
       let near = this.tablelistScrollList.map(i => Math.abs(i - scrollTop));
       let min = Math.min(...near);
@@ -921,9 +927,11 @@ export default {
       clearInterval(this.scrollTimer);
       let target = this.tablelistScrollList[this.data.indexOf(n)];
       let tablebox = document.getElementById("tablebox");
+      let llast = -1;
       let last = tablebox.scrollTop;
       let step = 10;
       this.scrollTimer = setInterval(() => {
+        llast = last;
         tablebox.scrollTop = last + (target - last) / step;
         last = tablebox.scrollTop;
         if (Math.abs(target - last) < 3) {
@@ -936,6 +944,8 @@ export default {
           step = 3;
         } else if (Math.abs(target - last) < 100) {
           step = 5;
+        } else if (llast === last) {
+          clearInterval(this.scrollTimer);
         }
       }, 20);
     }

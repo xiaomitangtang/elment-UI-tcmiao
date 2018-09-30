@@ -210,7 +210,7 @@ export default {
       this.formItemMouseMove = e => {
         e = e || event;
         let tempWidth = ((itemColW + (e.clientX - x)) / formWidth) * 100;
-        if (tempWidth < 30 || tempWidth > 100) return;
+        if (tempWidth < 10 || tempWidth > 100) return;
         this.$set(item.settings, "handleWidth", tempWidth + "%");
       };
       window.addEventListener("mousemove", this.formItemMouseMove);
@@ -282,6 +282,9 @@ export default {
         this.$store.commit("formDesigner/setActiveFormDragSrc", val);
       }
     }
+  },
+  updated() {
+    this.$emit("panelUpdated");
   },
   watch: {
     formItemList() {

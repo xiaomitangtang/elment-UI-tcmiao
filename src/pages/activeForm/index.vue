@@ -462,7 +462,7 @@ export default {
         }
       ],
       currentAnka: null,
-      tableList: null,
+      tableList: [],
       formListDragData: null,
       currenShowTable: null
     };
@@ -528,7 +528,6 @@ export default {
   },
   mounted() {
     this.currentAnka = this.ankaData[0];
-    this.tableList = this.currentAnka.CaseCardTemplete.TabsList[0].TableList;
     this.tableList = this.getAllTable(
       this.currentAnka.CaseCardTemplete.TabsList,
       true
