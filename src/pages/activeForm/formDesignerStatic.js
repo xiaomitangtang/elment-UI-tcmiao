@@ -845,7 +845,7 @@ function translateFormItem(item, index, maxWidth) {
   tempItem.settings.disabled = false;
   tempItem.isRequire = false;
   // tempItem.settings.placeholder = item.mrz;
-  tempItem.val = item.mrz;
+  tempItem.val = item.value;
   if (item.sjygl) {
     tempItem.settings.remote = true;
     tempItem.settings.remoteUrl = "/getSJYByProcedure?P_LBBM=" + item.sjygl;

@@ -819,9 +819,10 @@ export default {
       this.setSrollList();
     },
     setSrollList() {
-      this.$nextTick(() => {
+      clearTimeout(this.setScrollListTimer);
+      this.setScrollListTimer = setTimeout(() => {
         this.tablelistScrollList = this.$refs.table.map(i => i.offsetTop);
-      });
+      }, 200);
     },
     initTable(table) {
       let simgle = [];
@@ -851,7 +852,6 @@ export default {
       if (!this.data.length) return;
       this.tablelistData = this.data.map(i => this.initTable(i));
       clearInterval(this.initFormTimer);
-
       this.initFormTimer = setInterval(() => {
         //保证在所有panel都加载完成以后，进行数据初始化111112
         if (this.getAllPanes().length === this.tablelistData.length) {

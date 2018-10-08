@@ -43,7 +43,7 @@ export default {
                 TabsName: "支持起诉案件情况",
                 TableList: [
                   {
-                    TableName: "基本情况demo",
+                    TableName: "基本情况111",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC1",
@@ -145,7 +145,7 @@ export default {
                     ]
                   },
                   {
-                    TableName: "基本情况demo",
+                    TableName: "基本情况222",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC",
@@ -252,7 +252,7 @@ export default {
                 TabsName: "支持起诉案件123情况",
                 TableList: [
                   {
-                    TableName: "基本情况123demo",
+                    TableName: "第二个tableList1111",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC1",
@@ -354,7 +354,7 @@ export default {
                     ]
                   },
                   {
-                    TableName: "基本情况d1231emo",
+                    TableName: "第二个tableList222",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC",
@@ -539,24 +539,31 @@ export default {
       this.currentAnka.CaseCardTemplete.TabsList,
       true
     );
-    this.$api.activeForm.demoData({ params: { akmbbh: "100000231" } }).then(
-      data => {
-        this.ankaData = data.data;
-        this.currentAnka = this.ankaData[0];
-        this.tableList = this.getAllTable(
-          this.currentAnka.CaseCardTemplete.TabsList,
-          true
-        );
-      },
-      err => {
-        console.log(err);
-        // this.currentAnka = Object.assign({}, this.ankaData[0]);
-        // this.tableList = this.getAllTable(
-        //   this.currentAnka.CaseCardTemplete.TabsList,
-        //   true
-        // );
-      }
-    );
+    /*    this.$api.activeForm
+      .demoData({
+        params: {
+          akmbbh: "100000231",
+          bmsah: "山东省院民（行）违监[2014]37000000003号"
+        }
+      })
+      .then(
+        res => {
+          this.ankaData = res.data;
+          this.currentAnka = this.ankaData[0];
+          this.tableList = this.getAllTable(
+            this.currentAnka.CaseCardTemplete.TabsList,
+            true
+          );
+        },
+        err => {
+          console.log(err);
+          // this.currentAnka = Object.assign({}, this.ankaData[0]);
+          // this.tableList = this.getAllTable(
+          //   this.currentAnka.CaseCardTemplete.TabsList,
+          //   true
+          // );
+        }
+      );*/
   },
   components: {
     ankaList: () => import("./ankalist"),
