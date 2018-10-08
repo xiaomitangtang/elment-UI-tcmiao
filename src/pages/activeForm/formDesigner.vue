@@ -853,7 +853,7 @@ export default {
       clearInterval(this.initFormTimer);
 
       this.initFormTimer = setInterval(() => {
-        //保证在所有panel都加载完成以后，进行数据初始化22222
+        //保证在所有panel都加载完成以后，进行数据初始化111112
         if (this.getAllPanes().length === this.tablelistData.length) {
           this.getAllPanes().forEach(item => item.changemodel());
           this.setSrollList();
