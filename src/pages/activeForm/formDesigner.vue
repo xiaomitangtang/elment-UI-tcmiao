@@ -777,6 +777,7 @@ export default {
       if (formValid) {
         let temp = [];
         this.getAllPanes().forEach(i => {
+          console.log(i.formModel);
           temp = temp.concat(
             Object.keys(i.formModel).map(j => {
               let value = window._.isDate(i.formModel[j])
@@ -847,9 +848,20 @@ export default {
       );
     },
     initForm() {
+      if (!this.data.length) return;
       this.tablelistData = this.data.map(i => this.initTable(i));
-      this.getAllPanes().forEach(item => item.changemodel());
-      this.setSrollList();
+      clearInterval(this.initFormTimer);
+      this.initFormTimer = setInterval(() => {
+        //保证在所有panel都加载完成以后，进行数据初始化
+        if (this.getAllPanes().length === this.tablelistData.length) {
+          this.getAllPanes().forEach(item => item.changemodel());
+          this.setSrollList();
+          clearInterval(this.initFormTimer);
+          console.log("数据加载完成");
+        } else {
+          console.log("数据正在加载");
+        }
+      }, 30);
     },
     PanelMounted(panel) {
       if (panel) {
@@ -876,6 +888,34 @@ export default {
       if (!this.changing) return;
       clearInterval(this.scrollTimer);
       this.changing = false;
+    },
+    animateToTable(n) {
+      if (!this.tablelistScrollList) return;
+      this.changing = true;
+      clearInterval(this.scrollTimer);
+      let target = this.tablelistScrollList[this.data.indexOf(n)];
+      let tablebox = document.getElementById("tablebox");
+      let llast = -1;
+      let last = tablebox.scrollTop;
+      let step = 10;
+      this.scrollTimer = setInterval(() => {
+        llast = last;
+        tablebox.scrollTop = last + (target - last) / step;
+        last = tablebox.scrollTop;
+        if (Math.abs(target - last) < 3) {
+          clearInterval(this.scrollTimer);
+          tablebox.scrollTop = target;
+          this.changing = false;
+        } else if (Math.abs(target - last) < 10) {
+          step = 2;
+        } else if (Math.abs(target - last) < 30) {
+          step = 3;
+        } else if (Math.abs(target - last) < 100) {
+          step = 5;
+        } else if (llast === last) {
+          clearInterval(this.scrollTimer);
+        }
+      }, 20);
     }
   },
   components: {
@@ -929,32 +969,7 @@ export default {
       this.initForm();
     },
     currenTable(n) {
-      if (!this.tablelistScrollList) return;
-      this.changing = true;
-      clearInterval(this.scrollTimer);
-      let target = this.tablelistScrollList[this.data.indexOf(n)];
-      let tablebox = document.getElementById("tablebox");
-      let llast = -1;
-      let last = tablebox.scrollTop;
-      let step = 10;
-      this.scrollTimer = setInterval(() => {
-        llast = last;
-        tablebox.scrollTop = last + (target - last) / step;
-        last = tablebox.scrollTop;
-        if (Math.abs(target - last) < 3) {
-          clearInterval(this.scrollTimer);
-          tablebox.scrollTop = target;
-          this.changing = false;
-        } else if (Math.abs(target - last) < 10) {
-          step = 2;
-        } else if (Math.abs(target - last) < 30) {
-          step = 3;
-        } else if (Math.abs(target - last) < 100) {
-          step = 5;
-        } else if (llast === last) {
-          clearInterval(this.scrollTimer);
-        }
-      }, 20);
+      this.animateToTable(n);
     }
   },
   mounted() {

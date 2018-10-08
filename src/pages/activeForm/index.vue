@@ -57,7 +57,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-image",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC1",
                         zdFields: {
@@ -81,7 +81,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-input",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -105,7 +105,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "912",
+                        mrz: "",
                         sjlx: "el-upload",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -159,7 +159,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-image",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -183,7 +183,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-input",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -207,7 +207,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "912",
+                        mrz: "",
                         sjlx: "el-upload",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -266,7 +266,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-image",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC1",
                         zdFields: {
@@ -290,7 +290,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-input",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -314,7 +314,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "912",
+                        mrz: "",
                         sjlx: "el-upload",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -368,7 +368,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-image",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -392,7 +392,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "999",
+                        mrz: "",
                         sjlx: "el-input",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -416,7 +416,7 @@ export default {
                           ]
                         },
                         sjybm: "0",
-                        mrz: "912",
+                        mrz: "",
                         sjlx: "el-upload",
                         ysjzd: "TYYW_GG_AJJBXX+AJLB_MC",
                         zdFields: {
@@ -491,6 +491,7 @@ export default {
         this.currentAnka.CaseCardTemplete.TabsList,
         false
       );
+      this.initTableScroll();
     },
     ankaFormListDropedOnItem({ tab, itemIndex }) {
       tab.TableList.splice(itemIndex, 0, this.getOrignItem());
@@ -498,6 +499,12 @@ export default {
         this.currentAnka.CaseCardTemplete.TabsList,
         false
       );
+      this.initTableScroll();
+    },
+    initTableScroll() {
+      setTimeout(() => {
+        this.$refs.formdesigner.animateToTable(this.currenShowTable);
+      }, 400);
     },
     getAllTable(TabsList = [], init) {
       let alltable = window._.flatten(TabsList.map(i => i.TableList));
@@ -532,16 +539,24 @@ export default {
       this.currentAnka.CaseCardTemplete.TabsList,
       true
     );
-    this.$api.activeForm
-      .demoData({ params: { akmbbh: "100000231" } })
-      .then(data => {
+    this.$api.activeForm.demoData({ params: { akmbbh: "100000231" } }).then(
+      data => {
         this.ankaData = data.data;
         this.currentAnka = this.ankaData[0];
         this.tableList = this.getAllTable(
           this.currentAnka.CaseCardTemplete.TabsList,
           true
         );
-      });
+      },
+      err => {
+        console.log(err);
+        // this.currentAnka = Object.assign({}, this.ankaData[0]);
+        // this.tableList = this.getAllTable(
+        //   this.currentAnka.CaseCardTemplete.TabsList,
+        //   true
+        // );
+      }
+    );
   },
   components: {
     ankaList: () => import("./ankalist"),
