@@ -9,7 +9,7 @@
                   @dragstart.native="formItemDragStart(item,$event)" @dragenter.native="dropToIndex=index"
                   @dblclick.native="formItemClick({index,item})">
             <el-button      v-if="edit" size="mini" type="text" icon="el-icon-circle-close"  class="close-item" @click.stop="delFormItem(index,item)"></el-button>
-            <el-form-item   v-if="showformItem" :label="item.label" :label-width="item.labelWidth?(item.labelWidth+'px'):'1px'" :prop="item.key">
+            <el-form-item   v-if="showformItem" :label="item.label"  :id="item.elId" :label-width="item.labelWidth?(item.labelWidth+'px'):'1px'" :prop="item.key">
               <myElement    :draggable="edit"   :formModel="formModel" :innerdata="item"></myElement>
             </el-form-item>
             <div class="resizeBar" v-if="edit" @click.stop.passive @mousedown.stop.prevent="myelformItemResize($event,item)"  ></div>

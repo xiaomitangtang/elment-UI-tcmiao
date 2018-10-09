@@ -1,5 +1,5 @@
 <template>
-      <div>
+      <div >
         <el-input v-if="innerdata.component==='el-input'||innerdata.component==='el-textarea'"  v-bind="innerdata.settings" v-model="formModel[innerdata.key]"></el-input>
         <el-rate v-else-if="innerdata.component==='el-rate'" v-model="formModel[innerdata.key]" v-bind="innerdata.settings"></el-rate>
         <el-input-number v-else-if="innerdata.component==='el-input-number'" v-model.number="formModel[innerdata.key]"  v-bind="innerdata.settings" ></el-input-number>

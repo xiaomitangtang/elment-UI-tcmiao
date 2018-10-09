@@ -1,10 +1,9 @@
 <template>
   <div class='form-designer-main' @drop.stop.prevent @dragover.prevent>
-
     <div class="form-desgner-tables" ref="tablebox" id="tablebox" @scroll.passive="tableBoxScroll"
         @mousewheel="tableMouseWheel"
     >
-      <div  v-for="(table , index) in tablelistData" ref="table" :key="'ankatable'+index">
+    <!--  <div  v-for="(table , index) in tablelistData" ref="table" :key="'ankatable'+index">
         <el-row class="form-designer-main-header">
           <span class="form-designer-main-header-text">{{data?data[index].TableName:"表单"}}</span>
         </el-row>
@@ -18,7 +17,7 @@
                              @PanelMounted="PanelMounted" @PanelDestory="PanelDestory"
                              @panelUpdated="panelUpdated"
           ></formDesignerpane>
-          <!--     <el-row :style="designerStyleObj.paneheight">
+          &lt;!&ndash;     <el-row :style="designerStyleObj.paneheight">
                  <el-tabs v-if="showtaps&&activeFormData.tabs.length" class="form-tabs"  type="card"     v-model="nowformPaneName"
                           :editable="edit" @edit="formDesignerTabEdit" >
                    <el-tab-pane v-for="item in activeFormData.tabs" :label="item.name" :name="item.name" :key="item.name">
@@ -29,14 +28,46 @@
                      ></formDesignerpane>
                    </el-tab-pane>
                  </el-tabs>
-               </el-row>-->
+               </el-row>&ndash;&gt;
+        </el-row>
+      </div>-->
+
+      <div  v-for="(tab , tabindex) in translatedAnKa.CaseCardTemplete.TabsList  " ref="tab" :key="'ankatable'+tabindex">
+        <el-row class="form-designer-main-header">
+          <span class="form-designer-main-header-text">{{tab.TabsName}}</span>
+        </el-row>
+        <el-row class="form-designer-pane" >
+          <formDesignerpane v-if="tab.TableList.length===1"  class="form-designer-pain-main"
+                             ref="mainpain"
+                             :panelName="tab.TableList[0].TableName"
+                             :formItemList="tab.TableList[0].TableItems"
+                             @formDesignerpaneItemClick="formDesignerpaneItemClick"
+                             @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
+                             @PanelMounted="PanelMounted" @PanelDestory="PanelDestory"
+                             @panelUpdated="panelUpdated"
+                            @addError="addError"
+                            @removeError="removeError"
+          ></formDesignerpane>
+
+          <el-tabs v-else class="form-tabs"  type="card"
+                          :editable="edit"   :value="tab.currentTableName" @input="tabsValueChange(tab,$event)"
+                          @tab-click="tabPanelClick(tabindex,$event)">
+                   <el-tab-pane v-for="table in tab.TableList" :label="table.TableName" :name="table.TableName" :key="table.TableName"
+
+                   >
+                     <formDesignerpane     @formDesignerpaneItemClick="formDesignerpaneItemClick"
+                                           :formItemList="table.TableItems"
+                                           @setNowFormPaneAndnowFormPaneDragItem="setNowFormPaneAndnowFormPaneDragItem"
+                                           @PanelMounted="PanelMounted" @PanelDestory="PanelDestory"
+                                           @panelUpdated="panelUpdated"
+                                           @addError="addError"
+                                           @removeError="removeError"
+                     ></formDesignerpane>
+                   </el-tab-pane>
+                 </el-tabs>
         </el-row>
       </div>
     </div>
-
-
-
-
 
     <div class="form-designer-setting">
       <!--      <el-col :span="24" style="text-align: right">
@@ -627,8 +658,9 @@ import formDesignerStatic from "./formDesignerStatic";
 export default {
   name: "formDesigner",
   props: {
-    data: { type: Array },
-    currenTable: { type: Object }
+    data: { type: Object },
+    currenTab: { type: Object },
+    currentTable: { type: Object }
   },
   data() {
     return {
@@ -650,9 +682,17 @@ export default {
       nowFormPaneDragItem: null,
       dropToIndex: -1,
       dialogFormVisible: false,
-      tablelistData: [],
+      // tablelistData: [],
+      translatedAnKa: {
+        CaseCardTemplete: {
+          CaseCardCode: "0000000000000",
+          CaseCardName: "案卡",
+          TabsList: []
+        }
+      },
       panels: [],
-      scrollTimer: null
+      scrollTimer: null,
+      errors: []
     };
   },
   provide() {
@@ -710,7 +750,7 @@ export default {
         })
         .catch(() => {});
     },*/
-    /*    formDesignerTabEdit(targetName, action) {
+    /*  formDesignerTabEdit(targetName, action) {
       // console.log(targetName, action)
       if (action === "add") {
         this.$prompt("请输入pane名字", "提示", {
@@ -757,15 +797,17 @@ export default {
       this.nowFormPane = pane;
       this.formModalData = item;
       this.dialogFormVisible = true;
-    },
+    }, //名字有误，实际上是打开设置面板的方法
     setNowFormPaneAndnowFormPaneDragItem(pane, dragItem) {
       this.nowFormPane = pane;
       this.nowFormPaneDragItem = dragItem;
-    },
+    }, //拖拽表单元素时，记录当前拖动的panel以及拖动的表单元素
     getAllPanes() {
       return this.panels;
-    },
+    }, //获取当前设计器中所有panel的方法
     mysubmit() {
+      console.log(this.translatedAnKa);
+      this.$emit("clearErrors");
       let formValid = this.getAllPanes()
         .map(item => item.validField())
         .every(i => i);
@@ -804,27 +846,32 @@ export default {
           }
         );
       }
-    },
+    }, //点击保存按钮向后台提交数据的方法
     changemodel() {
       this.$store.commit("formDesigner/setEdit", !this.edit);
       if (this.edit) {
         return;
       }
       this.getAllPanes().forEach(item => item.changemodel());
-    },
+    }, //点击编辑或者关闭编辑，刷新一个所有panel，因为表单元素想el-form挂载是在mounted以及destory中进行操作，必须刷新一个才能有验证规则
     getAllTableItem() {
-      return window._.flatten(this.tablelistData);
-    },
+      return window._.flattenDepth(
+        this.translatedAnKa.CaseCardTemplete.TabsList.map(tab =>
+          tab.TableList.map(table => table.TableItems)
+        ),
+        2
+      );
+    }, //将当前设计器中所有的表中的数据，平铺为表单元素的数组，方便其他地方使用
     panelUpdated() {
       this.setSrollList();
-    },
+    }, //当设计器中的panel更新时，从新获取一下最新的panel的位置，用于滚动
     setSrollList() {
       clearTimeout(this.setScrollListTimer);
       this.setScrollListTimer = setTimeout(() => {
-        this.tablelistScrollList = this.$refs.table.map(i => i.offsetTop);
+        this.tablelistScrollList = this.$refs.tab.map(i => i.offsetTop);
       }, 200);
-    },
-    initTable(table) {
+    }, //一个抽取的保存panel位置的方法，已经使用定时器进行了截流，不会立即保存，而是有延迟debounce效果
+    initTable(table, tabIndex, tableIndex) {
       let simgle = [];
       let double = [];
       table.TableItems.forEach((item, index) => {
@@ -838,17 +885,23 @@ export default {
           );
         }
       });
-      let maxSingle = Math.max(...simgle) < 200 ? Math.max(...simgle) : 200;
-      let maxDouble = Math.max(...double) < 200 ? Math.max(...double) : 200;
-      return table.TableItems.map((item, index) =>
-        this.translateFormItem(
-          item,
-          index,
-          index % 2 === 0 ? maxSingle : maxDouble
+      let maxSingle = Math.max(...simgle) < 120 ? Math.max(...simgle) : 120;
+      let maxDouble = Math.max(...double) < 120 ? Math.max(...double) : 120;
+      return {
+        TableName: table.TableName,
+        ExtItems: table.ExtItems,
+        TableItems: table.TableItems.map((item, index) =>
+          this.translateFormItem(
+            item,
+            index,
+            index % 2 === 0 ? maxSingle : maxDouble,
+            tabIndex,
+            tableIndex
+          )
         )
-      );
-    },
-    initForm() {
+      };
+    }, //转化table的方法，用于将老版本的案卡系统的数据转化为当前的表数据
+    /*   initForm() {
       if (!this.data.length) return;
       this.tablelistData = this.data.map(i => this.initTable(i));
       clearInterval(this.initFormTimer);
@@ -863,17 +916,17 @@ export default {
           console.log("数据正在加载");
         }
       }, 30);
-    },
+    },*/
     PanelMounted(panel) {
       if (panel) {
         this.panels.push(panel);
       }
-    },
+    }, //panel的挂载事件，当panel挂载时，保存panel
     PanelDestory(panel) {
       if (panel) {
         this.panels.splice(this.panels.indexOf(panel), 1);
       }
-    },
+    }, //panel的卸载事件，当panel卸载时，移除
     tableBoxScroll(e) {
       if (this.changing) return;
       this.scrollCount = this.scrollCount ? this.scrollCount + 1 : 1;
@@ -882,19 +935,58 @@ export default {
       let near = this.tablelistScrollList.map(i => Math.abs(i - scrollTop));
       let min = Math.min(...near);
       if (min < 100) {
-        this.$emit("currentTableChange", this.data[near.indexOf(min)]);
+        let tab = this.data.CaseCardTemplete.TabsList[near.indexOf(min)];
+        let currentTableName = this.translatedAnKa.CaseCardTemplete.TabsList[
+          near.indexOf(min)
+        ].currentTableName;
+        let table = tab.TableList.filter(
+          tb => tb.TableName === currentTableName
+        )[0];
+        this.$emit("currentTableChange", {
+          tab,
+          table
+        });
       }
-    },
+    }, //设计器中的容器框滚动事件，用于同步设计器中的容器与左侧的导航
     tableMouseWheel() {
       if (!this.changing) return;
       clearInterval(this.scrollTimer);
       this.changing = false;
-    },
-    animateToTable(n) {
+    }, //在容器中滚动鼠标滚轮事件，用于停止正在进行的滚动，将用户的滚动优先级提到最高
+    animateToTab(n) {
       if (!this.tablelistScrollList) return;
+      let target = this.tablelistScrollList[
+        this.data.CaseCardTemplete.TabsList.indexOf(n)
+      ];
+      this.animateTo(target);
+    }, //当currenttab改变时，将容器滚动到相应的位置
+    animateToError(data) {
+      let errTab = this.translatedAnKa.CaseCardTemplete.TabsList[
+        data.item.tabIndex
+      ];
+      let errorTable = errTab.TableList[data.item.tableIndex];
+      errTab.currentTableName = errorTable.TableName;
+      this.$nextTick(() => {
+        let targetEl = document.getElementById(data.item.elId);
+        let tablistY =
+          targetEl.offsetParent.offsetParent.offsetParent.offsetParent
+            .offsetTop;
+        let tempElToTabList =
+          targetEl.offsetParent.offsetParent.offsetParent.offsetTop;
+        let errorTab = this.data.CaseCardTemplete.TabsList[data.item.tabIndex];
+        if (errorTab.TableList.length === 1) {
+          this.animateTo(tempElToTabList + tablistY);
+        } else if (errorTab.TableList.length > 1) {
+          tablistY =
+            targetEl.offsetParent.offsetParent.offsetParent.offsetParent
+              .offsetParent.offsetTop;
+          this.animateTo(tempElToTabList + tablistY);
+        }
+      });
+    }, //当用户点击错误提示时，将容器滚动到相对应的错误位置
+    animateTo(target) {
       this.changing = true;
       clearInterval(this.scrollTimer);
-      let target = this.tablelistScrollList[this.data.indexOf(n)];
       let tablebox = document.getElementById("tablebox");
       let llast = -1;
       let last = tablebox.scrollTop;
@@ -917,6 +1009,77 @@ export default {
           clearInterval(this.scrollTimer);
         }
       }, 20);
+    }, //一个抽取的滚动容器到指定位置的方法，
+    translateAnka() {
+      let tempAnka = {
+        CaseCardTemplete: {
+          CaseCardCode: "0000000000000",
+          CaseCardName: "案卡",
+          TabsList: []
+        }
+      };
+      if (this.data) {
+        tempAnka.CaseCardTemplete.CaseCardCode = this.data.CaseCardTemplete.CaseCardCode;
+        tempAnka.CaseCardTemplete.CaseCardName = this.data.CaseCardTemplete.CaseCardName;
+        tempAnka.CaseCardTemplete.TabsList = this.data.CaseCardTemplete.TabsList.map(
+          (tab, tabIndex) => {
+            return {
+              TabsName: tab.TabsName,
+              currentTableName:
+                tab.currentTableName ||
+                (tab.TableList[0] && tab.TableList[0].TableName),
+              TableList: tab.TableList.map((table, tableIndex) =>
+                this.initTable(table, tabIndex, tableIndex)
+              )
+            };
+          }
+        );
+      }
+      this.translatedAnKa = tempAnka;
+      this.initPanelsFormModal();
+    }, //将老版本的案卡系统的数据进行转化为本系统所需要的数据
+    initPanelsFormModal() {
+      clearInterval(this.initFormTimer);
+      let tableNum = 0;
+      this.translatedAnKa.CaseCardTemplete.TabsList.forEach(tab => {
+        tableNum += tab.TableList.length;
+      });
+      this.initFormTimer = setInterval(() => {
+        //保证在所有panel都加载完成以后，进行数据初始化111112
+        if (this.getAllPanes().length === tableNum) {
+          this.getAllPanes().forEach(item => item.changemodel());
+          this.setSrollList();
+          clearInterval(this.initFormTimer);
+          this.$emit("clearErrors");
+          console.log("数据加载完成");
+        } else {
+          console.log("数据正在加载");
+        }
+      }, 100);
+    }, //刷新panel的方法
+    setCurrentTable(table, tab) {
+      this.translatedAnKa.CaseCardTemplete.TabsList[
+        this.data.CaseCardTemplete.TabsList.indexOf(tab)
+      ].currentTableName =
+        table.TableName;
+    }, //用户点击左侧导航时，同步本设计器中的table
+    tabPanelClick(tabindex, event) {
+      let tab = this.data.CaseCardTemplete.TabsList[tabindex];
+      let table = tab.TableList.filter(tb => tb.TableName === event.name)[0];
+      this.$emit("currentTableChange", {
+        tab,
+        table
+      });
+    }, //用户选中
+    tabsValueChange(tab, val) {
+      tab.currentTableName = val;
+      this.setSrollList();
+    },
+    addError(data) {
+      this.$emit("addError", data);
+    },
+    removeError(data) {
+      this.$emit("removeError", data);
     }
   },
   components: {
@@ -967,14 +1130,16 @@ export default {
   },
   watch: {
     data() {
-      this.initForm();
+      this.translateAnka();
     },
-    currenTable(n) {
-      this.animateToTable(n);
+    currenTab(n) {
+      this.animateToTab(n);
     }
   },
   mounted() {
-    this.initForm();
+    console.log(this.data);
+    // this.initForm();
+    this.translateAnka();
   }
 };
 </script>
@@ -1079,7 +1244,7 @@ export default {
   width: calc(33% - 10px);
 }
 .el-form-item {
-  margin-bottom: 10px;
+  margin-bottom: 0px !important;
 }
 
 .close-item {
@@ -1110,7 +1275,7 @@ export default {
 .my-element {
   position: relative;
   padding: 5px 10px 0 10px !important;
-  min-height: 64px;
+  /*min-height: 64px;*/
   overflow: hidden;
   .el-checkbox,
   .el-radio {
@@ -1191,6 +1356,7 @@ export default {
     max-height: 40px;
     margin-bottom: 0;
     line-height: 20px;
+    font-size: 12px;
   }
   .changeWidthbtns,
   .close-item {
@@ -1218,6 +1384,18 @@ export default {
     &:hover {
       color: #a4a4a4;
     }
+  }
+}
+
+.el-form-item__error {
+  opacity: 0;
+  height: 0;
+}
+.el-tab-pane {
+  display: block !important;
+  &[aria-hidden="true"] {
+    height: 0 !important;
+    opacity: 0;
   }
 }
 </style>

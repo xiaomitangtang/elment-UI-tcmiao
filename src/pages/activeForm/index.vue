@@ -16,7 +16,17 @@
                 ></ankaformList>
             </div>
             <div class=" fullhight active-form-page-body-anka-main-body-form">
-                <formDesigner ref="formdesigner" :data="tableList"  :currenTable="currenShowTable" @currentTableChange="ankaTableClick"></formDesigner>
+                <formDesigner ref="formdesigner" :data="currentAnka"  :currenTab="currenShowTab" :currentTable="currenShowTable"
+                              @currentTableChange="currentTableChange"
+                              @addError="addError"
+                              @removeError="removeError"
+                              @clearErrors="clearErrors"
+               ></formDesigner>
+            </div>
+            <div class="fullhight active-form-page-body-anka-main-body-errors">
+                <div v-for="(error,index) in errorsList" :key="index">
+                    <div @click="errorClick(error)">{{error.item.label}}</div>
+                </div>
             </div>
         </div>
 <!--      <el-col class="fullhight" :span="4" ><dragmenu></dragmenu></el-col>
@@ -43,11 +53,11 @@ export default {
                 TabsName: "支持起诉案件情况",
                 TableList: [
                   {
-                    TableName: "基本情况111",
+                    TableName: "基本情况demo111",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC1",
-                        zdzwmc: "小白",
+                        zdzwmc: "小白1111",
                         sfjh: true,
                         bdfz: {
                           bbfz: false,
@@ -71,7 +81,7 @@ export default {
                       },
                       {
                         zdywmc: "TYYW_GG_AqJJBXX--AJLB_MC1",
-                        zdzwmc: "小白",
+                        zdzwmc: "小白11111111111111",
                         sfjh: "true/false",
                         bdfz: {
                           bbfz: false,
@@ -95,7 +105,7 @@ export default {
                       },
                       {
                         zdywmc: "TYYW_GG_AJJB6XX--AJLB_MC",
-                        zdzwmc: "小白",
+                        zdzwmc: "小白11111111111111",
                         sfjh: "true/false",
                         bdfz: {
                           bbfz: false,
@@ -145,11 +155,11 @@ export default {
                     ]
                   },
                   {
-                    TableName: "基本情况222",
+                    TableName: "基本情况demo2222",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC",
-                        zdzwmc: "小白",
+                        zdzwmc: "小白222222222222",
                         sfjh: true,
                         bdfz: {
                           bbfz: false,
@@ -173,7 +183,7 @@ export default {
                       },
                       {
                         zdywmc: "TYYW_GG_AqJJBXX--AJLB_MC",
-                        zdzwmc: "小白",
+                        zdzwmc: "小白2222222222222222",
                         sfjh: "true/false",
                         bdfz: {
                           bbfz: false,
@@ -197,7 +207,7 @@ export default {
                       },
                       {
                         zdywmc: "TYYW_GG_AJJB6XX--AJLB_MC",
-                        zdzwmc: "小白",
+                        zdzwmc: "小白22222222222",
                         sfjh: "true/false",
                         bdfz: {
                           bbfz: false,
@@ -252,7 +262,7 @@ export default {
                 TabsName: "支持起诉案件123情况",
                 TableList: [
                   {
-                    TableName: "第二个tableList1111",
+                    TableName: "基本情况123demo1111",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC1",
@@ -354,7 +364,7 @@ export default {
                     ]
                   },
                   {
-                    TableName: "第二个tableList222",
+                    TableName: "基本情况d1231emo22222",
                     TableItems: [
                       {
                         zdywmc: "TYYW_GG_AJJBXX--AJLB_MC",
@@ -464,7 +474,9 @@ export default {
       currentAnka: null,
       tableList: [],
       formListDragData: null,
-      currenShowTable: null
+      currenShowTable: null,
+      currenShowTab: null,
+      errorsList: []
     };
   },
   methods: {
@@ -472,8 +484,15 @@ export default {
       this.currentAnka = data.anka;
       console.log(this.currentAnka);
     },
-    ankaTableClick(data) {
-      this.currenShowTable = data;
+    ankaTableClick({ table, tab }) {
+      tab.currentTableName = table.TableName;
+      this.currenShowTab = tab;
+      this.currenShowTable = table;
+      this.$refs.formdesigner.setCurrentTable(table, tab);
+    },
+    currentTableChange({ table, tab }) {
+      this.currenShowTab = tab;
+      this.currenShowTable = table;
     },
     ankaFormListDragItem(data) {
       this.formListDragData = data;
@@ -487,31 +506,17 @@ export default {
     },
     ankaFormListDropedOnTitle({ tab }) {
       tab.TableList.push(this.getOrignItem());
-      this.tableList = this.getAllTable(
-        this.currentAnka.CaseCardTemplete.TabsList,
-        false
-      );
       this.initTableScroll();
     },
     ankaFormListDropedOnItem({ tab, itemIndex }) {
       tab.TableList.splice(itemIndex, 0, this.getOrignItem());
-      this.tableList = this.getAllTable(
-        this.currentAnka.CaseCardTemplete.TabsList,
-        false
-      );
       this.initTableScroll();
     },
     initTableScroll() {
+      this.$refs.formdesigner.translateAnka();
       setTimeout(() => {
-        this.$refs.formdesigner.animateToTable(this.currenShowTable);
+        this.$refs.formdesigner.animateToTab(this.currenShowTab);
       }, 400);
-    },
-    getAllTable(TabsList = [], init) {
-      let alltable = window._.flatten(TabsList.map(i => i.TableList));
-      if (init) {
-        this.currenShowTable = alltable[0];
-      }
-      return alltable;
     },
     editName(data) {
       let oldname =
@@ -531,15 +536,32 @@ export default {
           console.log(err);
         }
       );
+    },
+    addError(data) {
+      this.errorsList.push(data);
+    },
+    removeError(data) {
+      let tempIndex = -1;
+      this.errorsList.forEach((er, index) => {
+        if (er.item.elId === data.item.elId) {
+          tempIndex = index;
+        }
+      });
+      if (tempIndex !== -1) {
+        this.errorsList.splice(tempIndex, 1);
+      }
+    },
+    clearErrors() {
+      this.errorsList = [];
+    },
+    errorClick(data) {
+      this.$refs.formdesigner.animateToError(data);
     }
   },
   mounted() {
     this.currentAnka = this.ankaData[0];
-    this.tableList = this.getAllTable(
-      this.currentAnka.CaseCardTemplete.TabsList,
-      true
-    );
-    /*    this.$api.activeForm
+    this.currenShowTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];
+    this.$api.activeForm
       .demoData({
         params: {
           akmbbh: "100000231",
@@ -550,10 +572,7 @@ export default {
         res => {
           this.ankaData = res.data;
           this.currentAnka = this.ankaData[0];
-          this.tableList = this.getAllTable(
-            this.currentAnka.CaseCardTemplete.TabsList,
-            true
-          );
+          this.currenShowTable = this.currentAnka.CaseCardTemplete.TabsList[0].TableList[0];
         },
         err => {
           console.log(err);
@@ -563,7 +582,7 @@ export default {
           //   true
           // );
         }
-      );*/
+      );
   },
   components: {
     ankaList: () => import("./ankalist"),
@@ -614,7 +633,12 @@ export default {
         .active-form-page-body-anka-main-body-form {
           float: left;
           padding: 10px 0 10px 10px;
-          width: calc(100% - 200px);
+          width: calc(100% - 400px);
+        }
+        .active-form-page-body-anka-main-body-errors {
+          float: left;
+          width: 200px;
+          padding: 10px 0;
         }
       }
     }

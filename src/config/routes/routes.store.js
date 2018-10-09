@@ -6,5 +6,5 @@ let routes = [];
 routes = routes.concat(ui);
 routes = routes.concat(avtiveform);
 // routes = routes.concat(standard);
-routes = routes.concat([{ path: "*", redirect: "/swxUI" }]);
+routes = routes.concat([{ path: "*", redirect: "/activeForm" }]);
 export default routes;

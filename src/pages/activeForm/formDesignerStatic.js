@@ -586,10 +586,6 @@ function getDefauleVal(item) {
     } else {
       return item.val;
     }
-    /* element对日期类型字符串已经进行过转化，所以我这里不再转化
-         else if (item.component === 'el-date-picker' && Array.isArray(item.val)) {
-          return [new Date(item.val[0]), new Date(item.val[1])]
-        } */
   }
   if (item.settings.multiple) {
     return [];
@@ -620,20 +616,34 @@ function getDefauleVal(item) {
   }
 } //根据不同的表单元素进行判断并返回默认值
 function formValid(item, rule, value, callback) {
-  if (item.key === "TYYW_GG_AJJBXX--ZHXGSJ") {
-    window._.flatten(this.formDedigner.tablelistData).forEach(i => {
+  if (item.init) {
+    item.init = false;
+    return;
+  }
+  if (item.key === "TYYW_GG_AJJBXX--FZ") {
+    this.formDedigner.getAllTableItem().forEach(i => {
       if (i.key === "TYYW_GG_AJJBXX--SFGZAJ") {
         i.settings.disabled = !value;
       }
     });
-    this.formDedigner.panels.forEach(panel => {
-      if (panel.formModel["TYYW_GG_AJJBXX--SFGZAJ"]) {
-        panel.formModel["TYYW_GG_AJJBXX--SFGZAJ"] = "";
-      }
-    });
+
+    if (value) {
+      this.$emit("removeError", {
+        value,
+        item
+      });
+      callback();
+    } else {
+      this.$emit("addError", {
+        value,
+        item
+      });
+      callback(new Error(""));
+    }
+    return;
   }
   callback();
-}
+} //自定义校验方法
 function getDefaultRule(item, val) {
   let tempRule = [{ validator: formValid.bind(this, item), trigger: "change" }];
   if (!item.isRequire) {
@@ -828,15 +838,18 @@ function isSettingVisible(setting, val) {
     (this.$store.state.formDesigner.allSettting || userableSetting[val])
   );
 } //此方法用于返回相对应的设置项是否展示出来给用户进行设置
-function translateFormItem(item, index, maxWidth) {
+function translateFormItem(item, index, maxWidth, tabIndex, tableIndex) {
   let tempItem = {
     key: item.zdywmc,
+    elId: item.zdywmc,
     label: item.zdzwmc || "",
     span: 24 / this.$store.state.formDesigner.layout,
     component: item.sjlx || "el-select",
     offset: 0,
     labelWidth: "",
-    settings: {}
+    settings: {},
+    tabIndex, //仅仅用于记录改字段属于第几个tablist
+    tableIndex //仅仅用于记录改字段属于第几个table
   };
   // let textW = tempItem.label.replace(/[\u4e00-\u9fa5]/g, "aa").length * 8 + 12;
   // tempItem.labelWidth = textW === 12 ? 0 : Math.min(Math.max(textW, 120), 180);
@@ -844,6 +857,7 @@ function translateFormItem(item, index, maxWidth) {
   tempItem.settings = getSettings(tempItem);
   tempItem.settings.disabled = false;
   tempItem.isRequire = false;
+  tempItem.init = true;
   // tempItem.settings.placeholder = item.mrz;
   tempItem.val = item.value;
   if (item.sjygl) {

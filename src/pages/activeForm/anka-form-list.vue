@@ -8,7 +8,7 @@
             >{{tab.TabsName}}</div>
             <ul class="form-list-ul" >
                 <li class="form-list-item" :class="{'anka-form-active':currenTable===form}"
-                    @click="formClick(form)" v-for="(form,index2) in tab.TableList"
+                    @click="formClick(form,tab)" v-for="(form,index2) in tab.TableList"
                     :key="'form'+index+index2"
                     draggable="true"
                     @dblclick="itemDbClick(form)"
@@ -44,8 +44,8 @@ export default {
     };
   },
   methods: {
-    formClick(item) {
-      this.$emit("ankaTableClick", item);
+    formClick(table, tab) {
+      this.$emit("ankaTableClick", { table, tab });
     },
     dragStart(tab, item, index, index2) {
       this.$emit("dragItem", { tab, item, tabIndex: index, itemIndex: index2 });
